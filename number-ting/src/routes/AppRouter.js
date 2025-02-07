@@ -27,7 +27,7 @@ const AppRouter = () => {
         <Route element={<PrivateRoute permissionLevel="customer" />}>
           <Route path="/mypage" element={<MyPage />} />
         </Route>
-        <Route path="/adminpage" element={<AdminPage permissionLevel="admin" />} />
+        <Route path="/adminPage" element={<AdminPage permissionLevel="admin" />} />
       </Route>
     </Routes>
   )
