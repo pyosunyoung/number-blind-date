@@ -10,6 +10,7 @@ const RegisterPage = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false); // 이용약관 동의 상태
+  const [testResponse, setTestResponse] = useState(""); // 🔹 백엔드 응답을 저장할 상태 추가
 
   // 🔹 학교 이메일 유효성 검사 함수
   const validateSchoolEmail = (email) => {
@@ -44,21 +45,20 @@ const RegisterPage = () => {
       return;
     }
 
-    try {
-      // ✅ 1. 먼저 `/api/test` 엔드포인트를 호출하여 서버 상태 확인
-      const testResponse = await axios.get("http://localhost:8080/api/test");
-      console.log("백엔드 테스트 응답:", testResponse.data);
 
-      // ✅ 2. 백엔드가 정상 응답을 보내면 회원가입 요청 진행
-      const registerResponse = await axios.post(
-        "http://localhost:8080/api/register",
-        {
-          nickname,
-          schoolEmail,
-          department,
-          password,
-        }
-      );
+    // "/api -> 삭제 필요(진태)"
+    try {
+      // ✅ 1. `/api/test` 엔드포인트를 호출하여 백엔드 상태 확인
+      const testRes = await axios.get("/api/test");
+      setTestResponse(testRes.data); // 🔹 백엔드 응답을 상태로 저장하여 화면에 표시
+
+      // ✅ 2. 회원가입 요청 진행
+      const registerResponse = await axios.post("/api/register", {
+        nickname,
+        schoolEmail,
+        department,
+        password,
+      });
 
       // ✅ 3. 회원가입 요청 성공 시 처리
       if (registerResponse.status === 201 || registerResponse.status === 200) {
@@ -67,13 +67,9 @@ const RegisterPage = () => {
       } else {
         alert(`회원가입 실패: ${registerResponse.data.message}`);
       }
-    } catch (error) {
+    }catch (error) {
       console.error("API 요청 실패:", error);
-      if (error.response) {
-        alert(`오류 발생: ${error.response.data.message}`);
-      } else {
-        alert("서버와의 연결이 원활하지 않습니다.");
-      }
+      setTestResponse("서버 연결 오류!"); // 🔹 에러 발생 시 화면에 표시
     }
   };
 
@@ -83,7 +79,6 @@ const RegisterPage = () => {
         <Col md={6}>
           <h2 className="mb-4">회원가입</h2>
           <Form onSubmit={handleSubmit}>
-            {/* 🔹 닉네임 입력 */}
             <Form.Group controlId="formNickname">
               <Form.Label>닉네임</Form.Label>
               <Form.Control
@@ -95,7 +90,6 @@ const RegisterPage = () => {
               />
             </Form.Group><br/>
 
-            {/* 🔹 학교 이메일 입력 */}
             <Form.Group controlId="formSchoolEmail">
               <Form.Label>학교 이메일</Form.Label>
               <Form.Control
@@ -107,7 +101,6 @@ const RegisterPage = () => {
               />
             </Form.Group><br/>
 
-            {/* 🔹 학과 입력 */}
             <Form.Group controlId="formDepartment">
               <Form.Label>학과</Form.Label>
               <Form.Control
@@ -119,7 +112,6 @@ const RegisterPage = () => {
               />
             </Form.Group><br/>
 
-            {/* 🔹 비밀번호 입력 */}
             <Form.Group controlId="formPassword">
               <Form.Label>비밀번호</Form.Label>
               <Form.Control
@@ -131,7 +123,6 @@ const RegisterPage = () => {
               />
             </Form.Group><br/>
 
-            {/* 🔹 비밀번호 확인 입력 */}
             <Form.Group controlId="formConfirmPassword">
               <Form.Label>비밀번호 확인</Form.Label>
               <Form.Control
@@ -143,7 +134,6 @@ const RegisterPage = () => {
               />
             </Form.Group><br/>
 
-            {/* 🔹 이용약관 동의 체크박스 */}
             <Form.Group controlId="formTerms">
               <Form.Check
                 type="checkbox"
@@ -153,11 +143,7 @@ const RegisterPage = () => {
                       서비스 이용약관
                     </a>{" "}
                     및{" "}
-                    <a
-                      href="/privacy"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+                    <a href="/privacy" target="_blank" rel="noopener noreferrer">
                       개인정보 처리방침
                     </a>{" "}
                     에 동의합니다.
@@ -169,7 +155,6 @@ const RegisterPage = () => {
               />
             </Form.Group><br/>
 
-            {/* 🔹 약관에 동의하지 않으면 버튼 비활성화 */}
             <Button
               variant="primary"
               type="submit"
@@ -179,6 +164,12 @@ const RegisterPage = () => {
               회원가입
             </Button>
           </Form>
+
+          {/* 🔹 백엔드 응답을 화면에 표시 */}
+          <div style={{ marginTop: "20px", padding: "10px", backgroundColor: "#f8f9fa", borderRadius: "5px" }}>
+            <h4>백엔드 응답 확인:</h4>
+            <p><strong>{testResponse}</strong></p>
+          </div>
         </Col>
       </Row>
     </Container>
