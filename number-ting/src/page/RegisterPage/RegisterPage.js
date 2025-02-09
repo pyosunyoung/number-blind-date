@@ -14,7 +14,7 @@ const RegisterPage = () => {
   const [userPassword, setUserPassword] = useState(""); // 비밀번호
   const [confirmPassword, setConfirmPassword] = useState(""); // 비밀번호 확인
   const [gender, setGender] = useState("남성"); // 기본값: 남성
-  const [birthDate, setBirthDate] = useState(""); // 생년월일
+  const [birth_date, setBirthDate] = useState(""); // 생년월일
   const [location, setLocation] = useState(""); // 지역
   const [agreeTerms, setAgreeTerms] = useState(false); // 이용약관 동의 상태
 
@@ -49,22 +49,31 @@ const RegisterPage = () => {
       return;
     }
 
-    console.log("이름:", userName);
-    console.log("이메일:", email);
-    console.log("비밀번호:", userPassword);
-    console.log("비밀번호 확인:", confirmPassword);
-    console.log("성별:", gender);
-    console.log("생년월일:", birthDate);
-    console.log("지역:", location);
+    // JSON 형식으로 콘솔 출력
+    console.log(
+      JSON.stringify(
+        {
+          email,
+          username: userName,
+          password: userPassword,
+          gender,
+          birth_date,
+          location,
+          role: "USER",
+        },
+        null,
+        2
+      )
+    );
 
     // Redux 이용
     dispatch(
       registerUser({
-        userName,
         email,
+        userName,
         userPassword,
         gender,
-        birthDate,
+        birth_date,
         location,
         navigate,
       })
@@ -148,7 +157,7 @@ const RegisterPage = () => {
               <Form.Label>생년월일</Form.Label>
               <Form.Control
                 type="date"
-                value={birthDate}
+                value={birth_date}
                 onChange={(e) => setBirthDate(e.target.value)}
                 required
               />

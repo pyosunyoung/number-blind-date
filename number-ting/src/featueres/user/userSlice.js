@@ -47,17 +47,17 @@ export const logout = () => (dispatch) => {
 export const registerUser = createAsyncThunk(
   "user/registerUser",
   async (
-    { userName, email, userPassword, gender, birthDate, location, navigate },
+    { userName, email, userPassword, gender, birth_date, location, navigate },
     { dispatch, rejectWithValue }
   ) => {
     try {
       const response = await api.post("/user", {
-        userName,
         email,
+        userName,
         userPassword,
         gender,
-        birthDate,
-        location
+        birth_date,
+        location,
       });
 
       dispatch(
