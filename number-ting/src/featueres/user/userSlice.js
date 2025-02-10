@@ -51,7 +51,7 @@ export const registerUser = createAsyncThunk(
     { dispatch, rejectWithValue }
   ) => {
     try {
-      const response = await api.post("/user", {
+      const response = await api.post("/auth/register", {
         email,
         userName,
         userPassword,

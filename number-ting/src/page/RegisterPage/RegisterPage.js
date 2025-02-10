@@ -26,6 +26,8 @@ const RegisterPage = () => {
   const handleSubmit = (event) => {
     event.preventDefault(); // 기본 폼 제출 방지
 
+    const formattedBirthDate = new Date(birth_date).toISOString().split("T")[0];
+
     // 이메일 유효성 검사
     if (!validateEmail(email)) {
       alert("올바른 학교 이메일을 입력하세요 (예: example@bu.ac.kr).");
@@ -58,7 +60,7 @@ const RegisterPage = () => {
           username: userName,
           password: userPassword,
           gender,
-          birth_date,
+          birth_date: formattedBirthDate,
           location,
           role: "USER",
         },
@@ -74,7 +76,7 @@ const RegisterPage = () => {
         userName,
         userPassword,
         gender,
-        birth_date,
+        birth_date: formattedBirthDate,
         location,
         navigate,
       })
