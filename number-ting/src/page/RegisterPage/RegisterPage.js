@@ -1,76 +1,84 @@
 import React, { useState } from "react";
 import { Form, Button, Container, Row, Col } from "react-bootstrap";
-import axios from "axios";
+import { useDispatch } from "react-redux";
+import { registerUser } from "../../featueres/user/userSlice";
+import { useNavigate } from "react-router-dom";
 
 const RegisterPage = () => {
-  // 🔹 사용자 입력값을 저장하는 state (React의 useState 사용)
-  const [nickname, setNickname] = useState("");
-  const [schoolEmail, setSchoolEmail] = useState("");
-  const [department, setDepartment] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // 사용자 입력값 저장 state
+  const [userName, setUserName] = useState(""); // 유저 이름
+  const [email, setEmail] = useState(""); // 이메일
+  const [userPassword, setUserPassword] = useState(""); // 비밀번호
+  const [confirmPassword, setConfirmPassword] = useState(""); // 비밀번호 확인
+  const [gender, setGender] = useState("남성"); // 기본값: 남성
+  const [birth_date, setBirthDate] = useState(""); // 생년월일
+  const [location, setLocation] = useState(""); // 지역
   const [agreeTerms, setAgreeTerms] = useState(false); // 이용약관 동의 상태
   const [testResponse, setTestResponse] = useState(""); // 🔹 백엔드 응답을 저장할 상태 추가
 
-  // 🔹 학교 이메일 유효성 검사 함수
-  const validateSchoolEmail = (email) => {
-    return email.endsWith("@bu.ac.kr"); // 학교 도메인 확인 (예: bu.ac.kr)
-  };
+  // 이메일 유효성 검사 함수
+  const validateEmail = (email) => email.endsWith("@bu.ac.kr");
 
-  // 🔹 회원가입 버튼 클릭 시 실행되는 함수
-  const handleSubmit = async (event) => {
-    event.preventDefault(); // 기본 폼 제출 동작 방지
+  // 회원가입 버튼 클릭 시 실행되는 함수
+  const handleSubmit = (event) => {
+    event.preventDefault(); // 기본 폼 제출 방지
 
-    // 🔹 이메일 형식 확인
-    if (!validateSchoolEmail(schoolEmail)) {
+    // 이메일 유효성 검사
+    if (!validateEmail(email)) {
       alert("올바른 학교 이메일을 입력하세요 (예: example@bu.ac.kr).");
       return;
     }
 
-    // 🔹 비밀번호 길이 검사 (최소 8자)
-    if (password.length < 8) {
+    // 비밀번호 길이 검사
+    if (userPassword.length < 8) {
       alert("비밀번호는 최소 8자 이상이어야 합니다.");
       return;
     }
 
-    // 🔹 비밀번호 확인 체크
-    if (password !== confirmPassword) {
+    // 비밀번호 확인 검사
+    if (userPassword !== confirmPassword) {
       alert("비밀번호가 일치하지 않습니다.");
       return;
     }
 
-    // 🔹 이용약관 동의 확인
+    // 이용약관 동의 확인
     if (!agreeTerms) {
       alert("서비스 이용약관 및 개인정보 처리방침에 동의해야 합니다.");
       return;
     }
 
+    // JSON 형식으로 콘솔 출력
+    console.log(
+      JSON.stringify(
+        {
+          email,
+          username: userName,
+          password: userPassword,
+          gender,
+          birth_date,
+          location,
+          role: "USER",
+        },
+        null,
+        2
+      )
+    );
 
-    // "/api -> 삭제 필요(진태)"
-    try {
-      // ✅ 1. `/api/test` 엔드포인트를 호출하여 백엔드 상태 확인
-      const testRes = await axios.get("/api/test");
-      setTestResponse(testRes.data); // 🔹 백엔드 응답을 상태로 저장하여 화면에 표시
-
-      // ✅ 2. 회원가입 요청 진행
-      const registerResponse = await axios.post("/api/register", {
-        nickname,
-        schoolEmail,
-        department,
-        password,
-      });
-
-      // ✅ 3. 회원가입 요청 성공 시 처리
-      if (registerResponse.status === 201 || registerResponse.status === 200) {
-        alert("회원가입 성공!");
-        window.location.href = "/login"; // 로그인 페이지로 이동
-      } else {
-        alert(`회원가입 실패: ${registerResponse.data.message}`);
-      }
-    }catch (error) {
-      console.error("API 요청 실패:", error);
-      setTestResponse("서버 연결 오류!"); // 🔹 에러 발생 시 화면에 표시
-    }
+    // Redux 이용
+    dispatch(
+      registerUser({
+        email,
+        userName,
+        userPassword,
+        gender,
+        birth_date,
+        location,
+        navigate,
+      })
+    );
   };
 
   return (
@@ -79,50 +87,46 @@ const RegisterPage = () => {
         <Col md={6}>
           <h2 className="mb-4">회원가입</h2>
           <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="formNickname">
-              <Form.Label>닉네임</Form.Label>
+            {/* 🔹 유저 이름 */}
+            <Form.Group controlId="formUserName">
+              <Form.Label>이름</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="닉네임을 입력하세요"
-                value={nickname}
-                onChange={(e) => setNickname(e.target.value)}
+                placeholder="이름을 입력하세요"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
                 required
               />
-            </Form.Group><br/>
+            </Form.Group>
+            <br />
 
-            <Form.Group controlId="formSchoolEmail">
-              <Form.Label>학교 이메일</Form.Label>
+            {/* 🔹 이메일 */}
+            <Form.Group controlId="formEmail">
+              <Form.Label>이메일</Form.Label>
               <Form.Control
                 type="email"
-                placeholder="학교 이메일을 입력하세요 (예: example@bu.ac.kr)"
-                value={schoolEmail}
-                onChange={(e) => setSchoolEmail(e.target.value)}
+                placeholder="학교 이메일을 입력하세요"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
-            </Form.Group><br/>
+            </Form.Group>
+            <br />
 
-            <Form.Group controlId="formDepartment">
-              <Form.Label>학과</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="학과를 입력하세요"
-                value={department}
-                onChange={(e) => setDepartment(e.target.value)}
-                required
-              />
-            </Form.Group><br/>
-
-            <Form.Group controlId="formPassword">
+            {/* 🔹 비밀번호 */}
+            <Form.Group controlId="formUserPassword">
               <Form.Label>비밀번호</Form.Label>
               <Form.Control
                 type="password"
                 placeholder="비밀번호 (8자 이상)"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={userPassword}
+                onChange={(e) => setUserPassword(e.target.value)}
                 required
               />
-            </Form.Group><br/>
+            </Form.Group>
+            <br />
 
+            {/* 🔹 비밀번호 확인 */}
             <Form.Group controlId="formConfirmPassword">
               <Form.Label>비밀번호 확인</Form.Label>
               <Form.Control
@@ -132,28 +136,59 @@ const RegisterPage = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
               />
-            </Form.Group><br/>
+            </Form.Group>
+            <br />
 
+            {/* 🔹 성별 선택 */}
+            <Form.Group controlId="formGender">
+              <Form.Label>성별</Form.Label>
+              <Form.Select
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                required
+              >
+                <option value="남성">남성</option>
+                <option value="여성">여성</option>
+              </Form.Select>
+            </Form.Group>
+            <br />
+
+            {/* 🔹 생년월일 입력 */}
+            <Form.Group controlId="formBirthDate">
+              <Form.Label>생년월일</Form.Label>
+              <Form.Control
+                type="date"
+                value={birth_date}
+                onChange={(e) => setBirthDate(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <br />
+
+            {/* 🔹 지역 입력 */}
+            <Form.Group controlId="formLocation">
+              <Form.Label>지역</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="지역을 입력하세요"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <br />
+
+            {/* 🔹 이용약관 동의 */}
             <Form.Group controlId="formTerms">
               <Form.Check
                 type="checkbox"
-                label={
-                  <>
-                    <a href="/terms" target="_blank" rel="noopener noreferrer">
-                      서비스 이용약관
-                    </a>{" "}
-                    및{" "}
-                    <a href="/privacy" target="_blank" rel="noopener noreferrer">
-                      개인정보 처리방침
-                    </a>{" "}
-                    에 동의합니다.
-                  </>
-                }
+                label="서비스 이용약관 및 개인정보 처리방침에 동의합니다."
                 checked={agreeTerms}
                 onChange={(e) => setAgreeTerms(e.target.checked)}
                 required
               />
-            </Form.Group><br/>
+            </Form.Group>
+            <br />
 
             <Button
               variant="primary"
