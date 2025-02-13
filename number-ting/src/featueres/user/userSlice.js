@@ -13,23 +13,41 @@ import api from "../../utils/api";
 // page나 라우터도 어떤 대략적인 페이지들만 설정해논거라 알아서 유동적으로 페이지 추가시 라우터도 수정 바람.
 export const loginWithEmail = createAsyncThunk(
   "user/loginWithEmail",
-  async ({ email, password }, { rejectWithValue }) => {
+  async ({ email, userPassword }, { rejectWithValue }) => {
     try {
-      const response = await api.post("/auth/login", { email, password }); // post로 보내줌
+      const response = await api.post("/auth/login", { email, userPassword }); // post로 보내줌
+      console.log(response);
       //성공
       //Loginpage에서 처리
       // 토큰저장
       //1. local storage(페이지 닫혔다 켜져도 다시 유지)
       //2. session storage (새로고침하면 유지, 페이지 닫히면 유지x)
       sessionStorage.setItem("token", response.data.token);
+
+      
+
+      if (response.status === 404) {
+        console.log("로그인 실패! 존재하지 않는 이메일입니다.")
+        return
+      }
+
+      else if (response.status === 401) {
+        console.log("로그인 실패! 이메일 또는 비밀번호가 일치하지 않습니다.")
+        return
+      }
+
+
       return response.data; // response.data.user이렇게 해도 됨
     } catch (error) {
       //실패
       //실패시 생긴 에러값을 reducer에 저장
-      return rejectWithValue(error.error);
+      return rejectWithValue(error.response?.data?.error || error.message);
     }
+    
   }
 );
+
+
 
 export const loginWithGoogle = createAsyncThunk(
   "user/loginWithGoogle",
