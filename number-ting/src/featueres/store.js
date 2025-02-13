@@ -10,7 +10,7 @@ const store = configureStore({
     user: userSlice,
     // product: productSlice,
     // cart: cartSlice,
-    ui: uiSlice,
+    // ui: uiSlice,
     // order: orderSlice,
   },
 });
