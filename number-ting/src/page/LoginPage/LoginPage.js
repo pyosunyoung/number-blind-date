@@ -21,6 +21,7 @@ const LoginPage = () => {
     }
   }, [navigate, loginError, dispatch])
 
+  console.log('g')
   const handleLoginWithEmail = (event) => {
     event.preventDefault()
     dispatch(loginWithEmail({ email, userPassword }))
