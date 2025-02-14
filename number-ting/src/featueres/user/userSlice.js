@@ -23,35 +23,25 @@ export const loginWithEmail = createAsyncThunk(
       //1. local storage(페이지 닫혔다 켜져도 다시 유지)
       //2. session storage (새로고침하면 유지, 페이지 닫히면 유지x)
       sessionStorage.setItem("token", response.data.token);
-
-      
-
       if (response.status === 404) {
         console.log("로그인 실패! 존재하지 않는 이메일입니다.")
         return
-      }
-
-      else if (response.status === 401) {
+      } else if (response.status === 401) {
         console.log("로그인 실패! 이메일 또는 비밀번호가 일치하지 않습니다.")
         return
       }
-
-
       return response.data; // response.data.user이렇게 해도 됨
     } catch (error) {
       //실패
       //실패시 생긴 에러값을 reducer에 저장
       return rejectWithValue(error.response?.data?.error || error.message);
     }
-    
   }
 );
 
-
-
 export const loginWithGoogle = createAsyncThunk(
   "user/loginWithGoogle",
-  async (token, { rejectWithValue }) => {}
+  async (token, { rejectWithValue }) => { }
 );
 
 export const logout = () => (dispatch) => {

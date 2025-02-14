@@ -8,7 +8,6 @@ const api = axios.create({
   baseURL: LOCAL_BACKEND,
   headers: {
     "Content-Type": "application/json",
-    // authorization: `Bearer ${localStorage.getItem("token")}`,
   },
 });
 /**
@@ -39,7 +38,7 @@ api.interceptors.response.use(
     }
 
     const status = error.response.status;
-    
+
     switch (status) {
       case 401:  // 인증 실패 (로그인 필요)
         console.warn("🚨 [Axios] 401 Unauthorized - 인증 만료");
@@ -48,7 +47,7 @@ api.interceptors.response.use(
         sessionStorage.removeItem("token");
         window.location.href = "/login"; // 로그인 페이지로 이동
         break;
-      
+
       case 403:  // 접근 권한 없음
         console.warn("🚨 [Axios] 403 Forbidden - 접근 권한 없음");
         alert("접근 권한이 없습니다.");
@@ -72,28 +71,6 @@ api.interceptors.response.use(
     return Promise.reject(error.response?.data || error.message);
   }
 );
-
-/*api.interceptors.request.use(
-  (request) => {
-    // console.log("Starting Request", request);
-    request.headers.authorization = `Bearer ${sessionStorage.getItem("token")}`;
-    return request;
-  },
-  function (error) {
-    console.log("REQUEST ERROR", error);
-  }
-);
-
-api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  function (error) {
-    error = error.response.data;
-    console.log("RESPONSE ERROR", error);
-    return Promise.reject(error);
-  }
-);*/
 
 export default api;
 
