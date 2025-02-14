@@ -9,7 +9,7 @@ import api from "../../utils/api";
 // 개발하면서 유동적으로 폴더 및 파일 생성해가면서 Slice를 추가시키면 됨
 // 예로 번호팅 사이트에서 사용자가 포스트잇을 생성해서 그 정보들을 백엔드와 연동하고 싶으면
 // post라는 폴더 만들고 그 안에 postSlice 이런식으로 파일을 만들고 그안에 프론트 툴킷 기능들을 이 및 샘플과 같은 형식으로 코드를 작성하면 됨됨
-// featueres가 리듀스 툴킷 쓰는 파일들, postSlice를 만들었으면 store.js 객체안에도 넣어서 적용시켜주면 됨, post : postSlice이렇게
+// features가 리듀스 툴킷 쓰는 파일들, postSlice를 만들었으면 store.js 객체안에도 넣어서 적용시켜주면 됨, post : postSlice이렇게
 // page나 라우터도 어떤 대략적인 페이지들만 설정해논거라 알아서 유동적으로 페이지 추가시 라우터도 수정 바람.
 export const loginWithEmail = createAsyncThunk(
   "user/loginWithEmail",
@@ -17,7 +17,7 @@ export const loginWithEmail = createAsyncThunk(
     try {
       const response = await api.post("/auth/login", { email, password }); // post로 보내줌
       //성공
-      //Loginpage에서 처리
+      //LoginPage에서 처리
       // 토큰저장
       //1. local storage(페이지 닫혔다 켜져도 다시 유지)
       //2. session storage (새로고침하면 유지, 페이지 닫히면 유지x)
@@ -43,7 +43,7 @@ export const logout = () => (dispatch) => {
   sessionStorage.removeItem("token");
 };
 
-// 회원가입 요청 처리 (Redux 비동기 함수) - 주은 수정
+// 회원가입 요청 처리 - 주은
 export const registerUser = createAsyncThunk(
   "user/registerUser",
   async (
@@ -51,7 +51,7 @@ export const registerUser = createAsyncThunk(
     { dispatch, rejectWithValue }
   ) => {
     try {
-      const response = await api.post("/user", {
+      const response = await api.post("/auth/register", {
         email,
         userName,
         userPassword,
@@ -62,7 +62,7 @@ export const registerUser = createAsyncThunk(
 
       dispatch(
         showToastMessage({
-          message: "회원가입을 성공했습니다!",
+          message: response.data.message,
           status: "success",
         })
       );
@@ -70,13 +70,20 @@ export const registerUser = createAsyncThunk(
 
       return response.data;
     } catch (error) {
+      let errorMessage = "회원가입에 실패했습니다.";
+
+      if (error.response?.status === 409){
+        errorMessage = "이미 사용 중인 이메일입니다.";
+      }
+
       dispatch(
         showToastMessage({
-          message: "회원가입에 실패했습니다.",
+          message: errorMessage,
           status: "error",
         })
       );
-      return rejectWithValue(error.response?.data || "회원가입 실패");
+      
+      return rejectWithValue(error.response?.data || errorMessage);
     }
   }
 );
@@ -87,7 +94,7 @@ export const loginWithToken = createAsyncThunk(
     // _는 주는 정보 없음
     // 토큰은 login했을 때 저장됨 그 로직 짜러 가야함 login with email ㄱㄱ
     try {
-      // 다시 뭐 get TKoen을 할필요가 없음 우리는 이미 api.js에서 headrs에 token을 설정시켜놨기 떄문 그래서 이 토큰이 누구의 토큰인지만 요청해주면 됨
+      // 다시 뭐 get Token을 할필요가 없음 우리는 이미 api.js에서 headers에 token을 설정시켜놨기 떄문 그래서 이 토큰이 누구의 토큰인지만 요청해주면 됨
       const response = await api.get("/user/me");
       return response.data;
     } catch (error) {

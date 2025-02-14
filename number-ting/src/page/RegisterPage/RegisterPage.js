@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Form, Button, Container, Row, Col } from "react-bootstrap";
 import { useDispatch } from "react-redux";
-import { registerUser } from "../../featueres/user/userSlice";
+import { registerUser } from "../../features/user/userSlice";
 import { useNavigate } from "react-router-dom";
 
 const RegisterPage = () => {
