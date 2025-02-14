@@ -83,6 +83,10 @@ const RegisterPage = () => {
     );
   };
 
+
+  
+  
+
   return (
     <Container>
       <Row className="justify-content-md-center">
@@ -202,11 +206,7 @@ const RegisterPage = () => {
             </Button>
           </Form>
 
-          {/* 🔹 백엔드 응답을 화면에 표시 */}
-          <div style={{ marginTop: "20px", padding: "10px", backgroundColor: "#f8f9fa", borderRadius: "5px" }}>
-            <h4>백엔드 응답 확인:</h4>
-            <p><strong>{testResponse}</strong></p>
-          </div>
+          
         </Col>
       </Row>
     </Container>
