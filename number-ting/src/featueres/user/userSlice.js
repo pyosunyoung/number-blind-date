@@ -44,11 +44,18 @@ export const loginWithGoogle = createAsyncThunk(
   async (token, { rejectWithValue }) => { }
 );
 
-export const logout = () => (dispatch) => {
+export const logout = () => async (dispatch) => {
+  try {
+    await api.post("/auth/logout", {})
+    sessionStorage.removeItem("token");
+    dispatch(userLoggedOut());
+    window.location.href = "/login";
+  } catch (error) {
+    console.log("로그아웃 실패", error)
+  }
   // user정보를 지우고
-  dispatch(userLoggedOut());
+
   // session token의 값을 지운다.
-  sessionStorage.removeItem("token");
 };
 
 // 회원가입 요청 처리 (Redux 비동기 함수) - 주은 수정
