@@ -8,7 +8,7 @@ import uiSlice from "./common/uiSlice";
 const store = configureStore({
   reducer: {
     user: userSlice,
-    // product: productSlice,
+    // post: postSlice,
     // cart: cartSlice,
     // ui: uiSlice,
     // order: orderSlice,
