@@ -62,7 +62,7 @@ export const logout = () => async (dispatch) => {
 export const registerUser = createAsyncThunk(
   "user/registerUser",
   async (
-    { userName, email, userPassword, gender, birth_date, location, navigate },
+    { userName, email, userPassword, gender, age, nickname, contact,  location, navigate },
     { dispatch, rejectWithValue }
   ) => {
     try {
@@ -71,7 +71,9 @@ export const registerUser = createAsyncThunk(
         userName,
         userPassword,
         gender,
-        birth_date,
+        age,
+        nickname, 
+        contact, 
         location,
       });
 

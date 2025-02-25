@@ -10,7 +10,7 @@ export const createPost = createAsyncThunk(
     try{
       const response = await api.post("/matching/posts",formData)
       if(response.status!==200) throw new Error(response.error)
-      dispatch(showToastMessage({message:"포스트잇잇 생성 완료", status:"success"}))
+      dispatch(showToastMessage({message:"포스트잇 생성 완료", status:"success"}))
       // dispatch(getPostList({page:1}))
         return response.data.data
     }catch(error){
