@@ -14,10 +14,19 @@ const RegisterPage = () => {
   const [userPassword, setUserPassword] = useState(""); // 비밀번호
   const [confirmPassword, setConfirmPassword] = useState(""); // 비밀번호 확인
   const [gender, setGender] = useState("남성"); // 기본값: 남성
-  const [birth_date, setBirthDate] = useState(""); // 생년월일
+  // const [birth_date, setBirthDate] = useState(""); // 생년월일
+  const [age, setAge] = useState(0); // 나이
+  const [nickname, setNickname] = useState(""); // 닉네임
+  const [contact, setContact] = useState(""); // 연락 수단단
   const [location, setLocation] = useState(""); // 지역
   const [agreeTerms, setAgreeTerms] = useState(false); // 이용약관 동의 상태
   const [testResponse, setTestResponse] = useState(""); // 🔹 백엔드 응답을 저장할 상태 추가
+  const [contactMethod, setContactMethod] = useState("phone");
+  const placeholders = {
+    phone: "전화번호를 입력하세요.",
+    instagram: "인스타 ID를 입력하세요.",
+    kakao: "카카오톡 ID를 입력하세요."
+  };
 
   // 이메일 유효성 검사 함수
   const validateEmail = (email) => email.endsWith("@bu.ac.kr");
@@ -26,7 +35,7 @@ const RegisterPage = () => {
   const handleSubmit = (event) => {
     event.preventDefault(); // 기본 폼 제출 방지
 
-    const formattedBirthDate = new Date(birth_date).toISOString().split("T")[0];
+    // const formattedBirthDate = new Date(birth_date).toISOString().split("T")[0];
 
     // 이메일 유효성 검사
     if (!validateEmail(email)) {
@@ -60,7 +69,9 @@ const RegisterPage = () => {
           username: userName,
           password: userPassword,
           gender,
-          birth_date: formattedBirthDate,
+          age,
+          nickname, 
+          contact, 
           location,
           role: "USER",
         },
@@ -76,7 +87,9 @@ const RegisterPage = () => {
         userName,
         userPassword,
         gender,
-        birth_date: formattedBirthDate,
+        age,
+        nickname, 
+        contact, 
         location,
         navigate,
       })
@@ -159,16 +172,72 @@ const RegisterPage = () => {
             </Form.Group>
             <br />
 
-            {/* 🔹 생년월일 입력 */}
+            {/* 🔹 나이 입력 */}
             <Form.Group controlId="formBirthDate">
-              <Form.Label>생년월일</Form.Label>
+              <Form.Label>나이</Form.Label>
               <Form.Control
-                type="date"
-                value={birth_date}
-                onChange={(e) => setBirthDate(e.target.value)}
+                type="number"
+                value={age}
+                onChange={(e) => setAge(e.target.value)}
                 required
               />
             </Form.Group>
+            <br />
+            {/* 🔹 닉네임 입력 */}
+            <Form.Group controlId="formLocation">
+              <Form.Label>닉네임</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="사용하실 닉네임을 입력하세요" //모든 이름은 닉네임으로 운영됩니다.
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <br />
+
+             {/* 🔹 연락수단 선택 */}
+      <Form.Group controlId="contactMethod">
+        <Form.Label>연락 수단 선택</Form.Label>
+        <div>
+          <Form.Check
+            type="radio"
+            label="전화번호"
+            name="contactMethod"
+            value="phone"
+            checked={contactMethod === "phone"}
+            onChange={() => setContactMethod("phone")}
+          />
+          <Form.Check
+            type="radio"
+            label="인스타 ID"
+            name="contactMethod"
+            value="instagram"
+            checked={contactMethod === "instagram"}
+            onChange={() => setContactMethod("instagram")}
+          />
+          <Form.Check
+            type="radio"
+            label="카카오톡 ID"
+            name="contactMethod"
+            value="kakao"
+            checked={contactMethod === "kakao"}
+            onChange={() => setContactMethod("kakao")}
+          />
+        </div>
+      </Form.Group>
+
+      {/* 🔹 연락정보 입력 */}
+      <Form.Group controlId="formLocation">
+        <Form.Label></Form.Label>
+        <Form.Control
+          type="text"
+          placeholder={placeholders[contactMethod]}
+          value={contact}
+          onChange={(e) => setContact(e.target.value)}
+          required
+        />
+      </Form.Group>
             <br />
 
             {/* 🔹 지역 입력 */}
