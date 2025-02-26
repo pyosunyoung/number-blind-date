@@ -16,7 +16,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     // 요청을 보내기 전에 토큰 추가
-    const token = localStorage.getItem("access_token");
+    const token = sessionStorage.getItem("access_token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
