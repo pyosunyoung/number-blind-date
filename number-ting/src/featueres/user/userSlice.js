@@ -22,7 +22,13 @@ export const loginWithEmail = createAsyncThunk(
       // 토큰저장
       //1. local storage(페이지 닫혔다 켜져도 다시 유지)
       //2. session storage (새로고침하면 유지, 페이지 닫히면 유지x)
-      sessionStorage.setItem("token", response.data.token);
+      
+      const authHeader = response.headers.authorization;
+
+      const accessToken = authHeader.replace("Bearer ", "").trim();
+      sessionStorage.setItem("access_token", accessToken);
+
+       
 
       
 
@@ -44,7 +50,7 @@ export const loginWithGoogle = createAsyncThunk(
 export const logout = () => async (dispatch) => {
   try {
     await api.post("/auth/logout", {})
-    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("access_token");
     dispatch(userLoggedOut());
     window.location.href = "/login";
   } catch (error) {
