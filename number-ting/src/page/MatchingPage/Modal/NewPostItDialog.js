@@ -14,12 +14,11 @@ const NewPostItDialog = ({ showDialog, setShowDialog }) => {
     nickname: user?.nickname || '',
     contact: user?.contact || '',
     age: user?.age || "",
-    post: {
-      mbti: '',
-      height: "",
-      highlight: '',
-      hobby: [],
-    },
+    mbti: "",
+    height: "",
+    highlight: "",
+    hobbies: [],
+    
   };
   const [formData, setFormData] = useState({ ...InitialFormData });
   const [selectedHobby, setSelectedHobby] = useState([]);
@@ -58,12 +57,10 @@ const NewPostItDialog = ({ showDialog, setShowDialog }) => {
     const { id, value } = event.target;
     setFormData((prevState) => ({
       ...prevState,
-      post: {
-        ...prevState.post,
-        [id]: value,
-      },
+      [id]: value,
     }));
   };
+  
 
   const handleTagChange = (tag) => {
     setSelectedHobby((prevTags) =>
@@ -73,12 +70,12 @@ const NewPostItDialog = ({ showDialog, setShowDialog }) => {
     );
     setFormData((prevState) => ({
       ...prevState,
-      post: {
+      
         ...prevState.post,
-        hobby: selectedHobby.includes(tag)
+        hobbies: selectedHobby.includes(tag)
           ? selectedHobby.filter((t) => t !== tag)
           : [...selectedHobby, tag],
-      },
+      
     }));
   };
 
@@ -87,10 +84,13 @@ const NewPostItDialog = ({ showDialog, setShowDialog }) => {
     
     // 최종적으로 Redux user 정보와 formData를 합쳐서 제출
     const finalData = {
-      ...formData,
       nickname: user?.nickname || '',
       contact: user?.contact || '',
       age: user?.age || null,
+      mbti: formData.mbti,  
+      height: formData.height,
+      highlight: formData.highlight,
+      hobbies: formData.hobbies, 
     };
 
     console.log('Submitted Data:', finalData);
@@ -120,7 +120,7 @@ const NewPostItDialog = ({ showDialog, setShowDialog }) => {
               type="string"
               placeholder="mbti를 입력해주세요."
               required
-              value={formData.post.mbti}
+              value={formData.mbti}
             />
           </Form.Group>
         </Row>
@@ -133,7 +133,7 @@ const NewPostItDialog = ({ showDialog, setShowDialog }) => {
               type="number"
               placeholder="키를 입력해주세요."
               required
-              value={formData.post.height}
+              value={formData.height}
             />
           </Form.Group>
         </Row>
@@ -146,7 +146,7 @@ const NewPostItDialog = ({ showDialog, setShowDialog }) => {
               type="string"
               placeholder="어필 or 하고 싶은 말"
               required
-              value={formData.post.highlight}
+              value={formData.highlight}
             />
           </Form.Group>
         </Row>
@@ -170,19 +170,6 @@ const NewPostItDialog = ({ showDialog, setShowDialog }) => {
           '댄스',
           '캠핑',
           '악기 연주',
-          '러닝',
-          '낚시',
-          '퍼즐 맞추기',
-          '가드닝',
-          '봉사 활동',
-          '코딩',
-          '반려동물 돌보기',
-          '베이킹',
-          '보드게임',
-          '패션 스타일링',
-          '디자인',
-          '드라마 시청',
-          '애니/웹툰 감상',
         ].map((tag) => (
           <button
             type="button"
