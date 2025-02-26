@@ -22,13 +22,13 @@ import NewPostItDialog from './Modal/NewPostItDialog';
 
 const MatchingPage = () => {
   const navigate = useNavigate();
-  const [query] = useSearchParams();
+  // const [query] = useSearchParams();
   // const { postList, totalPageNum } = useSelector((state) => state.post);
   const [showDialog, setShowDialog] = useState(false);
-  const [searchQuery, setSearchQuery] = useState({
-    page: query.get("page") || 1,
-    name: query.get("name") || "",
-  }); //검색 조건들을 저장하는 객체, 해당 url의 page, name값 들고와라
+  // const [searchQuery, setSearchQuery] = useState({
+  //   page: query.get("page") || 1,
+  //   name: query.get("name") || "",
+  // }); //검색 조건들을 저장하는 객체, 해당 url의 page, name값 들고와라
 
   //포스트잇 리스트 가져오기 (url쿼리 맞춰서)
   // useEffect(()=>{
@@ -49,18 +49,18 @@ const MatchingPage = () => {
   const handleClickNewPostIt = () => {
     setShowDialog(true);
   }
-  const handlePageClick = ({ selected }) => { //1페이지를 누르면 
-    //  쿼리에 페이지값 바꿔주기
-    setSearchQuery({...searchQuery, page:selected + 1});
-    console.log("selected", selected);//1페이지를 누르면 0이 나옴 그래서 +1을 해주면 ;됨
-  };
+  // const handlePageClick = ({ selected }) => { //1페이지를 누르면 
+  //   //  쿼리에 페이지값 바꿔주기
+  //   setSearchQuery({...searchQuery, page:selected + 1});
+  //   console.log("selected", selected);//1페이지를 누르면 0이 나옴 그래서 +1을 해주면 ;됨
+  // };
   return (
     <div>
       한번 작성한 포스트잇은 수정 및 삭제가 불가능 하오니 신중하게 작성 부탁드려요!
       <Button className="mt-2 mb-2 buttonColor" variant="secondary" onClick={handleClickNewPostIt}>
           글쓰기 +
         </Button>
-        <ReactPaginate
+        {/* <ReactPaginate
           nextLabel="next >"
           onPageChange={handlePageClick}
           pageRangeDisplayed={5} //몇개의 페이지를 보여줄지
@@ -80,7 +80,7 @@ const MatchingPage = () => {
           containerClassName="pagination"
           activeClassName="active"
           className="paginate-style list-style-none"
-        />
+        /> */}
         <NewPostItDialog
           showDialog={showDialog}
           setShowDialog={setShowDialog}
