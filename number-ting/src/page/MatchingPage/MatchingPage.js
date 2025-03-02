@@ -28,6 +28,7 @@ const MatchingPage = () => {
   const dispatch = useDispatch();
   const [query] = useSearchParams();
   const { postList, totalPageNum } = useSelector((state) => state.post);
+  const { postList2} = useSelector((state) => state.post.postList); 
   const [filter, setFilter] = useState('all'); // 전체, 남자, 여자 필터
   const [showDialog, setShowDialog] = useState(false);
   const [searchQuery, setSearchQuery] = useState({
@@ -35,6 +36,7 @@ const MatchingPage = () => {
     // name: query.get("name") || "",
   }); //검색 조건들을 저장하는 객체, 해당 url의 page, name값 들고와라
   console.log('postList', postList);
+  console.log('postList2', postList2);
   // 포스트잇 리스트 가져오기 (url쿼리 맞춰서)
   useEffect(() => {
     console.log("searchQuery", searchQuery); // searchQuery는 {page:'1'} 이렇게 값이 들어가있음
