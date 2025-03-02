@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Button, Form } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector } from 'react-redux';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import ReactPaginate from 'react-paginate';
 import NewPostItDialog from './Modal/NewPostItDialog';
@@ -28,44 +28,30 @@ const MatchingPage = () => {
   const dispatch = useDispatch();
   const [query] = useSearchParams();
   const { postList, totalPageNum } = useSelector((state) => state.post);
-  const { postList2} = useSelector((state) => state.post.postList); 
   const [filter, setFilter] = useState('all'); // 전체, 남자, 여자 필터
   const [showDialog, setShowDialog] = useState(false);
   const [searchQuery, setSearchQuery] = useState({
     page: query.get('page') || 1,
-    // name: query.get("name") || "",
-  }); //검색 조건들을 저장하는 객체, 해당 url의 page, name값 들고와라
-  console.log('postList', postList);
-  console.log('postList2', postList2);
+  }); //검색 조건들을 저장하는 객체, 해당 url의 page
+  
   // 포스트잇 리스트 가져오기 (url쿼리 맞춰서)
   useEffect(() => {
-    console.log("searchQuery", searchQuery); // searchQuery는 {page:'1'} 이렇게 값이 들어가있음
-    console.log("searchquery type", typeof searchQuery.page);
-    dispatch(getPostList({ ...searchQuery })); // uri 커리가 바뀔 때 마다 호출하고 해당 searchQuery들을 보내겠다.
+    // URL 쿼리 동기화
+    const params = new URLSearchParams({ page: searchQuery.page });
+    navigate('?' + params.toString(), { replace: true });
     
-  }, [query]);
-
-  useEffect(() => {
-    //검색어나 페이지가 바뀌면 url바꿔주기 (검색어또는 페이지가 바뀜 => url 바꿔줌=> url쿼리 읽어옴=> 이 쿼리값 맞춰서  상품리스트 가져오기)
-    if (searchQuery.name === '') {
-      // 객체의 이름이 없다면
-      delete searchQuery.name; // 이름 필드를 삭제 시킴
-    }
-    const params = new URLSearchParams(searchQuery); // 검색어를 params url 형태로 바꿔줌 즉 객체를 쿼리 형태로 바꿔줌 page=1&name=jaket 이런식
-    const queryString = params.toString(); // 문자열로 바꿔줘야 적용됨 serarchQuery객체 => url로 바꿔줌
-    // console.log("qqq",query)
-    navigate('?' + queryString); // url 변경 완료, useSearchParams를 통해 query값을 익어옴
-  }, [searchQuery]);
-
+    // 페이지 번호가 변경될 때 API 호출
+    dispatch(getPostList({ ...searchQuery }));
+  }, [searchQuery.page]); 
+  
   const handleClickNewPostIt = () => {
     setShowDialog(true);
   };
   const handlePageClick = ({ selected }) => {
-    //1페이지를 누르면
-    //  쿼리에 페이지값 바꿔주기
-    setSearchQuery({ ...searchQuery, page: selected + 1 });
-    console.log('selected', selected); //1페이지를 누르면 0이 나옴 그래서 +1을 해주면 ;됨
+    
+    setSearchQuery(prev => ({ ...prev, page: selected + 1 }));
   };
+
   const handleFilterChange = (e) => {
     setFilter(e.target.value);
   };
@@ -170,7 +156,7 @@ const MatchingPage = () => {
         nextLabel="다음"
         onPageChange={handlePageClick}
         pageRangeDisplayed={3} //몇개의 페이지를 보여줄지
-        pageCount={totalPageNum} //totalPageNum원래 이값들어감 // 전체 페이지가 몇개인지는 백엔드만 알기 때문에 백엔드에서 알려줘야 함
+        pageCount={5} //totalPageNum원래 이값들어감 // 전체 페이지가 몇개인지는 백엔드만 알기 때문에 백엔드에서 알려줘야 함
         forcePage={searchQuery.page - 1}
         previousLabel="이전"
         renderOnZeroPageCount={null}

@@ -9,13 +9,7 @@ export const getPostList = createAsyncThunk(
   "posts/getPostList",
   async (query, { rejectWithValue }) => {
     try{
-      console.log("query", query);
-      // 페이지 값을 숫자로 변환 (문자열일 가능성 대비)
-      const fixedQuery = {
-        ...query,
-        page: parseInt(query.page, 10) || 1,
-      };
-      const response = await api.get("/posts", {params: fixedQuery}); // params가져와서 백엔드에 보냄
+      const response = await api.get("/posts", {params: {...query}}); // params가져와서 백엔드에 보냄
       console.log(query);
       if(response.status!==200) throw new Error(response.error);
       // console.log("rrr", response);
@@ -95,7 +89,7 @@ const postSlice = createSlice({
     ])
     .addCase(getPostList.fulfilled, (state, action) => {
       state.loading = false
-      state.postList = action.payload.data
+      state.postList = action.payload.postits
       state.error = ""
       state.totalPageNum = action.payload.total_pages
     })
