@@ -156,7 +156,7 @@ const MatchingPage = () => {
         nextLabel="다음"
         onPageChange={handlePageClick}
         pageRangeDisplayed={3} //몇개의 페이지를 보여줄지
-        pageCount={5} //totalPageNum원래 이값들어감 // 전체 페이지가 몇개인지는 백엔드만 알기 때문에 백엔드에서 알려줘야 함
+        pageCount={totalPageNum} //totalPageNum원래 이값들어감 // 전체 페이지가 몇개인지는 백엔드만 알기 때문에 백엔드에서 알려줘야 함
         forcePage={searchQuery.page - 1}
         previousLabel="이전"
         renderOnZeroPageCount={null}
