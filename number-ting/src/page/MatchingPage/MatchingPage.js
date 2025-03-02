@@ -37,7 +37,10 @@ const MatchingPage = () => {
   console.log('postList', postList);
   // 포스트잇 리스트 가져오기 (url쿼리 맞춰서)
   useEffect(() => {
+    console.log("searchQuery", searchQuery); // searchQuery는 {page:'1'} 이렇게 값이 들어가있음
+    console.log("searchquery type", typeof searchQuery.page);
     dispatch(getPostList({ ...searchQuery })); // uri 커리가 바뀔 때 마다 호출하고 해당 searchQuery들을 보내겠다.
+    
   }, [query]);
 
   useEffect(() => {

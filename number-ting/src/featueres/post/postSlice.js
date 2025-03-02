@@ -9,7 +9,14 @@ export const getPostList = createAsyncThunk(
   "posts/getPostList",
   async (query, { rejectWithValue }) => {
     try{
-      const response = await api.get("/posts", {params:{...query}}); // params가져와서 백엔드에 보냄
+      console.log("query", query);
+      // 페이지 값을 숫자로 변환 (문자열일 가능성 대비)
+      const fixedQuery = {
+        ...query,
+        page: parseInt(query.page, 10) || 1,
+      };
+      const response = await api.get("/posts", {params: fixedQuery}); // params가져와서 백엔드에 보냄
+      console.log(query);
       if(response.status!==200) throw new Error(response.error);
       // console.log("rrr", response);
       return response.data; // pagnum으로 인한 data로 변경
