@@ -8,11 +8,13 @@ const api = axios.create({
   baseURL: LOCAL_BACKEND,
   headers: {
     "Content-Type": "application/json",
+    
   },
 });
 /**
  * console.log all requests and responses
  */
+
 api.interceptors.request.use(
   (config) => {
     // 요청을 보내기 전에 토큰 추가

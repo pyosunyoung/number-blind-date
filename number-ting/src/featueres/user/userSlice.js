@@ -23,15 +23,11 @@ export const loginWithEmail = createAsyncThunk(
       //1. local storage(페이지 닫혔다 켜져도 다시 유지)
       //2. session storage (새로고침하면 유지, 페이지 닫히면 유지x)
       
+      // sessionStorage.setItem("token", response.data.token);
       const authHeader = response.headers.authorization;
 
       const accessToken = authHeader.replace("Bearer ", "").trim();
       sessionStorage.setItem("access_token", accessToken);
-
-       
-
-      
-
 
       return response.data; // response.data.user이렇게 해도 됨
     } catch (error) {
