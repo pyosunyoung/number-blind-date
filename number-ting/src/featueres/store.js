@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userSlice from "./user/userSlice";
-import postSlice from "./post/postSlice";
 import uiSlice from "./common/uiSlice";
+import postSlice from "./post/postSlice";
 // import productSlice from "./product/productSlice";
 // import cartSlice from "./cart/cartSlice";
 // import orderSlice from "./order/orderSlice";

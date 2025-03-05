@@ -2,6 +2,7 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { logout } from '../../featueres/user/userSlice'
+import MyPage from '../MyPage/MyPage'
 
 const IntroPage = () => {
   const dispatch = useDispatch()
@@ -19,6 +20,8 @@ const IntroPage = () => {
       <br/>
       <button onClick={() => dispatch(logout())}>로그아웃</button>
       <br/>
+      <br/>
+      <button onClick={()=> navigate("/MyPage")}>마이페이지</button>
       
     </div>
   )
