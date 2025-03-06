@@ -76,9 +76,9 @@ useEffect(() => {
       updateUserProfile({
         userName,
         email,
+        nickname,
         gender,
         age,
-        nickname,
         contact,
         location,
       })

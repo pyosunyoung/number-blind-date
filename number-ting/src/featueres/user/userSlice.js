@@ -134,8 +134,8 @@ export const updateUserProfile = createAsyncThunk(
         userName,
         email,
         gender,
-        age,
         nickname,
+        age,
         contact,
         location,
       });
@@ -146,7 +146,7 @@ export const updateUserProfile = createAsyncThunk(
           status: "success",
         })
       );
-
+      console.log(response.data);
       return response.data;
     } catch (error) {
       dispatch(
