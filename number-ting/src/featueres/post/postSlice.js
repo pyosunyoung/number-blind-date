@@ -61,6 +61,7 @@ const postSlice = createSlice({
     loading: false,
     error: "",
     totalPageNum: 1,
+    totalItemNum: null,
     success: false,
   },
   reducers:{
@@ -92,6 +93,8 @@ const postSlice = createSlice({
       state.postList = action.payload.postits
       state.error = ""
       state.totalPageNum = action.payload.total_pages
+      state.totalItemNum = action.payload.total_items
+      
     })
     .addCase(getPostList.rejected, (state, action) => {
       state.loading = false

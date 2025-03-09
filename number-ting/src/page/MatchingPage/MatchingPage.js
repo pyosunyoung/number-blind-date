@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Button, Form } from 'react-bootstrap';
-import {useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import ReactPaginate from 'react-paginate';
 import NewPostItDialog from './Modal/NewPostItDialog';
@@ -33,78 +33,75 @@ const MatchingPage = () => {
   const [searchQuery, setSearchQuery] = useState({
     page: query.get('page') || 1,
   }); //검색 조건들을 저장하는 객체, 해당 url의 page
-  
+  console.log(postList);
   // 포스트잇 리스트 가져오기 (url쿼리 맞춰서)
   useEffect(() => {
     // URL 쿼리 동기화
     const params = new URLSearchParams({ page: searchQuery.page });
     navigate('?' + params.toString(), { replace: true });
-    
+
     // 페이지 번호가 변경될 때 API 호출
     dispatch(getPostList({ ...searchQuery }));
-  }, [searchQuery.page]); 
-  
+  }, [searchQuery.page]);
+
   const handleClickNewPostIt = () => {
     setShowDialog(true);
   };
   const handlePageClick = ({ selected }) => {
-    
-    setSearchQuery(prev => ({ ...prev, page: selected + 1 }));
+    setSearchQuery((prev) => ({ ...prev, page: selected + 1 }));
   };
 
   const handleFilterChange = (e) => {
     setFilter(e.target.value);
   };
 
-  const TestPostList = {
-    page: 1,
-    total_pages: 5,
-    total_items: 15,
-    postits: [
-      // 이게 data.data? 없으면 전체가 data?
-      {
-        user_id: 1,
-        nickname: '백석대 장원영',
-        contact: 'kakao1234',
-        age: 25,
-        mbti: 'ENFP',
-        department: '컴퓨터공학부',
-        height: 173,
-        hobby: '영화보기, 운동',
-        highlight: '고양이 상이에요!',
-        gender: 'female',
-      },
-      {
-        user_id: 2,
-        nickname: '백석대 차은우',
-        contact: '01012345678',
-        age: 24,
-        mbti: 'INTP',
-        department: '관광학부',
-        height: 180,
-        hobby: '독서, 음악 감상',
-        highlight: '재미있고 유쾌해요',
-        gender: 'female',
-      },
-      {
-        user_id: 3,
-        nickname: '용감한 무지',
-        contact: 'instagram1234',
-        age: 22,
-        department: '간호학과',
-        mbti: 'ISTP',
-        height: 160,
-        hobby: '요리, 베이킹',
-        highlight: '조용하고 섬세해요',
-        gender: 'male',
-      },
-    ],
-  };
+  const TestPostList = [
+    // 이게 data.data? 없으면 전체가 data?
+    {
+      user_id: 1,
+      nickname: '백석대 장원영',
+      contact: 'kakao1234',
+      age: 25,
+      mbti: 'ENFP',
+      department: '컴퓨터공학부',
+      height: 173,
+      hobby: '영화보기, 운동',
+      highlight: '고양이 상이에요!',
+      gender: 'female',
+    },
+    {
+      user_id: 2,
+      nickname: '백석대 차은우',
+      contact: '01012345678',
+      age: 24,
+      mbti: 'INTP',
+      department: '관광학부',
+      height: 180,
+      hobby: '독서, 음악 감상',
+      highlight: '재미있고 유쾌해요',
+      gender: 'female',
+    },
+    {
+      user_id: 3,
+      nickname: '용감한 무지',
+      contact: 'instagram1234',
+      age: 22,
+      department: '간호학과',
+      mbti: 'ISTP',
+      height: 160,
+      hobby: '요리, 베이킹',
+      highlight: '조용하고 섬세해요',
+      gender: 'male',
+    },
+  ];
 
   const filteredPostList =
     filter === 'all'
-      ? TestPostList.postits
-      : TestPostList.postits.filter((post) => post.gender === filter);
+      ? TestPostList
+      : TestPostList.filter((post) => post.gender === filter);
+
+  
+
 
   console.log(filteredPostList);
   return (
@@ -144,14 +141,12 @@ const MatchingPage = () => {
       </div>
 
       <div className="postit-container">
-        {Array.isArray(filteredPostList)
-          ? filteredPostList.map((item) => (
-              <PostitBox key={item.user_id} item={item} />
-            ))
-          : Object.values(filteredPostList).map((item) => (
-              <PostitBox key={item.user_id} item={item} />
-            ))}
+        {filteredPostList.map((item) => (
+          <PostitBox key={item.user_id} item={item} />
+        ))}
       </div>
+
+        
       <ReactPaginate
         nextLabel="다음"
         onPageChange={handlePageClick}
