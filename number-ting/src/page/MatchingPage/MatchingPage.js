@@ -6,7 +6,8 @@ import ReactPaginate from 'react-paginate';
 import NewPostItDialog from './Modal/NewPostItDialog';
 import './MatchingPage.style.css';
 import PostitBox from './component/PostitBox';
-import { getPostList } from '../../featueres/post/postSlice';
+import { getPostDetail, getPostList } from '../../featueres/post/postSlice';
+import PostitDetailModal from './Modal/PostitDetailModal';
 // ★하루에 작성가능한 수량 제한이 필요할듯?, 저번에 말한 열람 제한도 동일 (오른쪽 상단에 배치하면 될듯)
 // 개발 해야 할 사항
 // 1. +포스트잇 붙이기 누를시 모달창 생성, 모달 = 팝업창
@@ -27,9 +28,11 @@ const MatchingPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [query] = useSearchParams();
-  const { postList, totalPageNum } = useSelector((state) => state.post);
+  const { postList, totalPageNum, selectedPost } = useSelector((state) => state.post);
   const [filter, setFilter] = useState('all'); // 전체, 남자, 여자 필터
   const [showDialog, setShowDialog] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
   const [searchQuery, setSearchQuery] = useState({
     page: query.get('page') || 1,
     
@@ -82,11 +85,63 @@ const MatchingPage = () => {
   const handleFilterChange = (e) => {
     setFilter(e.target.value);
   };
+  const handlePostClick = (id) => {
+    console.log("id값", id)
+    setSelectedId(id);
+    dispatch(getPostDetail(id));
+    setShowDetailModal(true);
+    
+  };
+
+  // const TestPostList = [
+  //     // 이게 data.data? 없으면 전체가 data?
+  //     {
+  //       user_id: 1,
+  //       nickname: '백석대 장원영',
+  //       contact: 'kakao1234',
+  //       age: 25,
+  //       mbti: 'ENFP',
+  //       department: '컴퓨터공학부',
+  //       height: 173,
+  //       hobby: '영화보기, 운동',
+  //       highlight: '고양이 상이에요!',
+  //       gender: 'female',
+  //     },
+  //     {
+  //       user_id: 2,
+  //       nickname: '백석대 차은우',
+  //       contact: '01012345678',
+  //       age: 24,
+  //       mbti: 'INTP',
+  //       department: '관광학부',
+  //       height: 180,
+  //       hobby: '독서, 음악 감상',
+  //       highlight: '재미있고 유쾌해요',
+  //       gender: 'female',
+  //     },
+  //     {
+  //       user_id: 3,
+  //       nickname: '용감한 무지',
+  //       contact: 'instagram1234',
+  //       age: 22,
+  //       department: '간호학과',
+  //       mbti: 'ISTP',
+  //       height: 160,
+  //       hobby: '요리, 베이킹',
+  //       highlight: '조용하고 섬세해요',
+  //       gender: 'male',
+  //     },
+  // ]
+
 
   const filteredPostList =
   filter === 'all'
     ? postList
     : postList.filter((post) => post.gender === filter);
+  // const filteredPostList =
+  //   filter === 'all'
+  //     ? TestPostList.postits
+  //     : TestPostList.postits.filter((post) => post.gender === filter);
 
   return (
     //포스트잇 아이템은 한페이지당 6개만 보여줄것
@@ -125,11 +180,21 @@ const MatchingPage = () => {
       </div>
 
       <div className="postit-container">
-        {filteredPostList.map((item) => (
-          <PostitBox key={item.user_id} item={item} />
-        ))}
-      </div>
-      
+  {filteredPostList.map((item) => (
+    <div key={item.user_id} className="postit-wrapper" onClick={() => handlePostClick(item.user_id)}>
+      <PostitBox item={item} />
+    </div>
+  ))}
+</div>
+      {/* <div className="postit-container">
+        {Array.isArray(filteredPostList)
+          ? filteredPostList.map((item) => (
+              <PostitBox key={item.user_id} item={item} />
+            ))
+          : Object.values(filteredPostList).map((item) => (
+              <PostitBox key={item.user_id} item={item} />
+            ))}
+      </div> */}
       <ReactPaginate
         nextLabel="다음"
         onPageChange={handlePageClick}
@@ -152,6 +217,9 @@ const MatchingPage = () => {
         className="paginate-style list-style-none"
       />
       <NewPostItDialog showDialog={showDialog} setShowDialog={setShowDialog} />
+      {showDetailModal && selectedPost && (
+        <PostitDetailModal show={showDetailModal} onHide={() => setShowDetailModal(false)} post={selectedPost} />
+      )}
     </div>
   );
 };
