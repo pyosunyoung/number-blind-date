@@ -93,51 +93,51 @@ const MatchingPage = () => {
     
   };
 
-  const TestPostList = [
-      // 이게 data.data? 없으면 전체가 data?
-      {
-        user_id: 1,
-        nickname: '백석대 장원영',
-        contact: 'kakao1234',
-        age: 25,
-        mbti: 'ENFP',
-        department: '컴퓨터공학부',
-        height: 173,
-        hobby: '영화보기, 운동',
-        highlight: '고양이 상이에요!',
-        gender: 'female',
-      },
-      {
-        user_id: 2,
-        nickname: '백석대 차은우',
-        contact: '01012345678',
-        age: 24,
-        mbti: 'INTP',
-        department: '관광학부',
-        height: 180,
-        hobby: '독서, 음악 감상',
-        highlight: '재미있고 유쾌해요',
-        gender: 'female',
-      },
-      {
-        user_id: 3,
-        nickname: '용감한 무지',
-        contact: 'instagram1234',
-        age: 22,
-        department: '간호학과',
-        mbti: 'ISTP',
-        height: 160,
-        hobby: '요리, 베이킹',
-        highlight: '조용하고 섬세해요',
-        gender: 'male',
-      },
-  ]
+  // const TestPostList = [
+  //     // 이게 data.data? 없으면 전체가 data?
+  //     {
+  //       user_id: 1,
+  //       nickname: '백석대 장원영',
+  //       contact: 'kakao1234',
+  //       age: 25,
+  //       mbti: 'ENFP',
+  //       department: '컴퓨터공학부',
+  //       height: 173,
+  //       hobby: '영화보기, 운동',
+  //       highlight: '고양이 상이에요!',
+  //       gender: 'female',
+  //     },
+  //     {
+  //       user_id: 2,
+  //       nickname: '백석대 차은우',
+  //       contact: '01012345678',
+  //       age: 24,
+  //       mbti: 'INTP',
+  //       department: '관광학부',
+  //       height: 180,
+  //       hobby: '독서, 음악 감상',
+  //       highlight: '재미있고 유쾌해요',
+  //       gender: 'female',
+  //     },
+  //     {
+  //       user_id: 3,
+  //       nickname: '용감한 무지',
+  //       contact: 'instagram1234',
+  //       age: 22,
+  //       department: '간호학과',
+  //       mbti: 'ISTP',
+  //       height: 160,
+  //       hobby: '요리, 베이킹',
+  //       highlight: '조용하고 섬세해요',
+  //       gender: 'male',
+  //     },
+  // ]
 
 
   const filteredPostList =
   filter === 'all'
-    ? TestPostList
-    : TestPostList.filter((post) => post.gender === filter);
+    ? postList
+    : postList.filter((post) => post.gender === filter);
   // const filteredPostList =
   //   filter === 'all'
   //     ? TestPostList.postits

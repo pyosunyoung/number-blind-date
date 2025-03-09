@@ -34,10 +34,10 @@ export const getPostDetail = createAsyncThunk(
   "posts/getPostDetail",
   async (id, { dispatch, rejectWithValue }) => {
     try {
-      const response = await api.get(`/posts/${id}`);
+      const response = await api.get(`/post/${id}`);
       if (response.status !== 200) throw new Error(response.error);
 
-      return response.data.data;
+      return response.data;
     } catch (error) {
       dispatch(
         showToastMessage({

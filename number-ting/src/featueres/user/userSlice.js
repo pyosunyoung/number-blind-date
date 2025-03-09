@@ -22,7 +22,7 @@ export const loginWithEmail = createAsyncThunk(
       // 토큰저장
       //1. local storage(페이지 닫혔다 켜져도 다시 유지)
       //2. session storage (새로고침하면 유지, 페이지 닫히면 유지x)
-      
+
       const authHeader = response.headers.authorization;
 
       const accessToken = authHeader.replace("Bearer ", "").trim();
@@ -39,7 +39,7 @@ export const loginWithEmail = createAsyncThunk(
 
 export const loginWithGoogle = createAsyncThunk(
   "user/loginWithGoogle",
-  async (token, { rejectWithValue }) => {}
+  async (token, { rejectWithValue }) => { }
 );
 
 export const logout = () => async (dispatch) => {
@@ -183,6 +183,7 @@ const userSlice = createSlice({
     loginError: null,
     registrationError: null,
     success: false,
+    profile: null,
   },
   reducers: {
     // 직접적으로 호출
@@ -233,11 +234,25 @@ const userSlice = createSlice({
       // })
       .addCase(loginWithToken.fulfilled, (state, action) => {
         state.user = action.payload.user; // 유저값 찾았으면 그냥 토큰 세팅만 해주면 됨
-      });
-    // .addCase(loginWithToken.rejected, (state,action)=>{
-    //   //유저값을 찾는건 이미 뒤에서 진행되는 것이니 유저값을 못찾으면
-    //다시 그냥 유저가 로그인 페이지를 다시 로그인할 수 있게 해주면 됨 필요x
+      })
+      // .addCase(loginWithToken.rejected, (state,action)=>{
+      //   //유저값을 찾는건 이미 뒤에서 진행되는 것이니 유저값을 못찾으면
+      //다시 그냥 유저가 로그인 페이지를 다시 로그인할 수 있게 해주면 됨 필요x
+      .addCase(fetchUserProfile.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchUserProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.profile = action.payload
+        state.loginError = null;
+      })
+      .addCase(fetchUserProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.loginError = action.payload;
+      })
+
   },
+
 });
 export const { clearErrors, userLoggedOut } = userSlice.actions;
 export default userSlice.reducer;

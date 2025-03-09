@@ -1,5 +1,6 @@
 import React from 'react'
 import { Modal, Button } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 const PostitDetailModal = ({ show, onHide, post }) => {
   const { selectedPost } = useSelector((state) => state.post);
   console.log("selectedPost", selectedPost);
