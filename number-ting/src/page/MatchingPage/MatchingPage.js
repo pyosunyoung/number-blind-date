@@ -6,7 +6,8 @@ import ReactPaginate from 'react-paginate';
 import NewPostItDialog from './Modal/NewPostItDialog';
 import './MatchingPage.style.css';
 import PostitBox from './component/PostitBox';
-import { getPostList } from '../../featueres/post/postSlice';
+import { getPostDetail, getPostList } from '../../featueres/post/postSlice';
+import PostitDetailModal from './Modal/PostitDetailModal';
 // ★하루에 작성가능한 수량 제한이 필요할듯?, 저번에 말한 열람 제한도 동일 (오른쪽 상단에 배치하면 될듯)
 // 개발 해야 할 사항
 // 1. +포스트잇 붙이기 누를시 모달창 생성, 모달 = 팝업창
@@ -27,13 +28,17 @@ const MatchingPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [query] = useSearchParams();
-  const { postList, totalPageNum } = useSelector((state) => state.post);
+  const { postList, totalPageNum, selectedPost } = useSelector((state) => state.post);
   const [filter, setFilter] = useState('all'); // 전체, 남자, 여자 필터
   const [showDialog, setShowDialog] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
   const [searchQuery, setSearchQuery] = useState({
     page: query.get('page') || 1,
-  }); //검색 조건들을 저장하는 객체, 해당 url의 page
-  
+    
+    // name: query.get("name") || "",
+  }); //검색 조건들을 저장하는 객체, 해당 url의 page, name값 들고와라
+
   // 포스트잇 리스트 가져오기 (url쿼리 맞춰서)
   // useEffect(() => {
   //   // console.log("searchQuery", searchQuery); // searchQuery는 {page:'1'} 이렇게 값이 들어가있음
@@ -59,27 +64,36 @@ const MatchingPage = () => {
     // URL 쿼리 동기화
     const params = new URLSearchParams({ page: searchQuery.page });
     navigate('?' + params.toString(), { replace: true });
-
+    
     // 페이지 번호가 변경될 때 API 호출
     dispatch(getPostList({ ...searchQuery }));
   }, [searchQuery.page]); 
+  
+  console.log("check",postList);
+  console.log("totalPageNum",totalPageNum);
+  
+  
   
   const handleClickNewPostIt = () => {
     setShowDialog(true);
   };
   const handlePageClick = ({ selected }) => {
-    setSearchQuery((prev) => ({ ...prev, page: selected + 1 }));
+    
+    setSearchQuery(prev => ({ ...prev, page: selected + 1 }));
   };
 
   const handleFilterChange = (e) => {
     setFilter(e.target.value);
   };
+  const handlePostClick = (id) => {
+    console.log("id값", id)
+    setSelectedId(id);
+    dispatch(getPostDetail(id));
+    setShowDetailModal(true);
+    
+  };
 
-  const TestPostList = {
-    page: 1,
-    total_pages: 5,
-    total_items: 15,
-    postits: [
+  const TestPostList = [
       // 이게 data.data? 없으면 전체가 data?
       {
         user_id: 1,
@@ -117,13 +131,17 @@ const MatchingPage = () => {
         highlight: '조용하고 섬세해요',
         gender: 'male',
       },
-    ],
-  };
+  ]
+
 
   const filteredPostList =
-    filter === 'all'
-      ? TestPostList.postits
-      : TestPostList.postits.filter((post) => post.gender === filter);
+  filter === 'all'
+    ? TestPostList
+    : TestPostList.filter((post) => post.gender === filter);
+  // const filteredPostList =
+  //   filter === 'all'
+  //     ? TestPostList.postits
+  //     : TestPostList.postits.filter((post) => post.gender === filter);
 
   return (
     //포스트잇 아이템은 한페이지당 6개만 보여줄것
@@ -162,10 +180,21 @@ const MatchingPage = () => {
       </div>
 
       <div className="postit-container">
-        {filteredPostList.map((item) => (
-          <PostitBox key={item.user_id} item={item} />
-        ))}
-      </div>
+  {filteredPostList.map((item) => (
+    <div key={item.user_id} className="postit-wrapper" onClick={() => handlePostClick(item.user_id)}>
+      <PostitBox item={item} />
+    </div>
+  ))}
+</div>
+      {/* <div className="postit-container">
+        {Array.isArray(filteredPostList)
+          ? filteredPostList.map((item) => (
+              <PostitBox key={item.user_id} item={item} />
+            ))
+          : Object.values(filteredPostList).map((item) => (
+              <PostitBox key={item.user_id} item={item} />
+            ))}
+      </div> */}
       <ReactPaginate
         nextLabel="다음"
         onPageChange={handlePageClick}
@@ -188,6 +217,9 @@ const MatchingPage = () => {
         className="paginate-style list-style-none"
       />
       <NewPostItDialog showDialog={showDialog} setShowDialog={setShowDialog} />
+      {showDetailModal && selectedPost && (
+        <PostitDetailModal show={showDetailModal} onHide={() => setShowDetailModal(false)} post={selectedPost} />
+      )}
     </div>
   );
 };
