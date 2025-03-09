@@ -25,10 +25,10 @@ const AppRouter = () => {
         <Route path="/NoticePage" element={<NoticePage />} />
         <Route path="/MatchingPage" element={<MatchingPage/>} />
         <Route path="/AIMatchingPage" element={<AIMatchingPage />} />
-
-        <Route element={<PrivateRoute permissionLevel="customer" />}>
+        <Route path="/mypage" element={<MyPage />} />
+        {/* <Route element={<PrivateRoute permissionLevel="customer" />}>
           <Route path="/mypage" element={<MyPage />} />
-        </Route>
+        </Route> */}
         <Route path="/adminPage" element={<AdminPage permissionLevel="admin" />} />
       </Route>
     </Routes>

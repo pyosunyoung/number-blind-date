@@ -22,7 +22,7 @@ export const loginWithEmail = createAsyncThunk(
       // 토큰저장
       //1. local storage(페이지 닫혔다 켜져도 다시 유지)
       //2. session storage (새로고침하면 유지, 페이지 닫히면 유지x)
-      // sessionStorage.setItem("token", response.data.token);
+      
       const authHeader = response.headers.authorization;
 
       const accessToken = authHeader.replace("Bearer ", "").trim();
@@ -39,17 +39,17 @@ export const loginWithEmail = createAsyncThunk(
 
 export const loginWithGoogle = createAsyncThunk(
   "user/loginWithGoogle",
-  async (token, { rejectWithValue }) => { }
+  async (token, { rejectWithValue }) => {}
 );
 
 export const logout = () => async (dispatch) => {
   try {
-    await api.post("/auth/logout", {})
-    sessionStorage.removeItem("token");
+    await api.post("/auth/logout", {});
+    sessionStorage.removeItem("access_token");
     dispatch(userLoggedOut());
     window.location.href = "/login";
   } catch (error) {
-    console.log("로그아웃 실패", error)
+    console.log("로그아웃 실패", error);
   }
   // user정보를 지우고
 
@@ -60,7 +60,17 @@ export const logout = () => async (dispatch) => {
 export const registerUser = createAsyncThunk(
   "user/registerUser",
   async (
-    { userName, email, userPassword, gender, age, nickname, contact,  location, navigate },
+    {
+      userName,
+      email,
+      userPassword,
+      gender,
+      age,
+      nickname,
+      contact,
+      location,
+      navigate,
+    },
     { dispatch, rejectWithValue }
   ) => {
     try {
@@ -70,8 +80,8 @@ export const registerUser = createAsyncThunk(
         userPassword,
         gender,
         age,
-        nickname, 
-        contact, 
+        nickname,
+        contact,
         location,
       });
 
@@ -92,6 +102,60 @@ export const registerUser = createAsyncThunk(
         })
       );
       return rejectWithValue(error.response?.data || "회원가입 실패");
+    }
+  }
+);
+
+// 회원 정보 불러오기
+export const fetchUserProfile = createAsyncThunk(
+  "user/fetchUserProfile",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get("/mypage");
+      console.log("Redux: 응답 데이터:", response.data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || "회원 정보를 불러오는데 실패했습니다."
+      );
+    }
+  }
+);
+
+// 회원 정보 수정
+export const updateUserProfile = createAsyncThunk(
+  "user/updateUserProfile",
+  async (
+    { userName, email, gender, age, nickname, contact, location },
+    { dispatch, rejectWithValue }
+  ) => {
+    try {
+      const response = await api.put("/user/profile", {
+        userName,
+        email,
+        gender,
+        nickname,
+        age,
+        contact,
+        location,
+      });
+
+      dispatch(
+        showToastMessage({
+          message: "회원 정보가 성공적으로 수정되었습니다.",
+          status: "success",
+        })
+      );
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      dispatch(
+        showToastMessage({
+          message: "회원 정보 수정에 실패했습니다.",
+          status: "error",
+        })
+      );
+      return rejectWithValue(error.response?.data || "회원 정보 수정 실패");
     }
   }
 );

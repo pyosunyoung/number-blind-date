@@ -33,8 +33,28 @@ const MatchingPage = () => {
   const [searchQuery, setSearchQuery] = useState({
     page: query.get('page') || 1,
   }); //검색 조건들을 저장하는 객체, 해당 url의 page
-  console.log(postList);
+  
   // 포스트잇 리스트 가져오기 (url쿼리 맞춰서)
+  // useEffect(() => {
+  //   // console.log("searchQuery", searchQuery); // searchQuery는 {page:'1'} 이렇게 값이 들어가있음
+  //   // console.log("searchquery type", typeof searchQuery.page);
+  //   dispatch(getPostList({ ...searchQuery })); // uri 커리가 바뀔 때 마다 호출하고 해당 searchQuery들을 보내겠다.
+    
+  // }, [query]);
+
+  // useEffect(() => {
+  //   //검색어나 페이지가 바뀌면 url바꿔주기 (검색어또는 페이지가 바뀜 => url 바꿔줌=> url쿼리 읽어옴=> 이 쿼리값 맞춰서  상품리스트 가져오기)
+  //   if (searchQuery.name === '') {
+  //     // 객체의 이름이 없다면
+  //     delete searchQuery.name; // 이름 필드를 삭제 시킴
+  //   }
+  //   const params = new URLSearchParams(searchQuery); // 검색어를 params url 형태로 바꿔줌 즉 객체를 쿼리 형태로 바꿔줌 page=1&name=jaket 이런식
+  //   const queryString = params.toString(); // 문자열로 바꿔줘야 적용됨 serarchQuery객체 => url로 바꿔줌
+  //   // console.log("qqq",query)
+  //   navigate('?' + queryString); // url 변경 완료, useSearchParams를 통해 query값을 익어옴
+  // }, [searchQuery]);
+
+
   useEffect(() => {
     // URL 쿼리 동기화
     const params = new URLSearchParams({ page: searchQuery.page });
@@ -42,8 +62,8 @@ const MatchingPage = () => {
 
     // 페이지 번호가 변경될 때 API 호출
     dispatch(getPostList({ ...searchQuery }));
-  }, [searchQuery.page]);
-
+  }, [searchQuery.page]); 
+  
   const handleClickNewPostIt = () => {
     setShowDialog(true);
   };
@@ -55,55 +75,56 @@ const MatchingPage = () => {
     setFilter(e.target.value);
   };
 
-  const TestPostList = [
-    // 이게 data.data? 없으면 전체가 data?
-    {
-      user_id: 1,
-      nickname: '백석대 장원영',
-      contact: 'kakao1234',
-      age: 25,
-      mbti: 'ENFP',
-      department: '컴퓨터공학부',
-      height: 173,
-      hobby: '영화보기, 운동',
-      highlight: '고양이 상이에요!',
-      gender: 'female',
-    },
-    {
-      user_id: 2,
-      nickname: '백석대 차은우',
-      contact: '01012345678',
-      age: 24,
-      mbti: 'INTP',
-      department: '관광학부',
-      height: 180,
-      hobby: '독서, 음악 감상',
-      highlight: '재미있고 유쾌해요',
-      gender: 'female',
-    },
-    {
-      user_id: 3,
-      nickname: '용감한 무지',
-      contact: 'instagram1234',
-      age: 22,
-      department: '간호학과',
-      mbti: 'ISTP',
-      height: 160,
-      hobby: '요리, 베이킹',
-      highlight: '조용하고 섬세해요',
-      gender: 'male',
-    },
-  ];
+  const TestPostList = {
+    page: 1,
+    total_pages: 5,
+    total_items: 15,
+    postits: [
+      // 이게 data.data? 없으면 전체가 data?
+      {
+        user_id: 1,
+        nickname: '백석대 장원영',
+        contact: 'kakao1234',
+        age: 25,
+        mbti: 'ENFP',
+        department: '컴퓨터공학부',
+        height: 173,
+        hobby: '영화보기, 운동',
+        highlight: '고양이 상이에요!',
+        gender: 'female',
+      },
+      {
+        user_id: 2,
+        nickname: '백석대 차은우',
+        contact: '01012345678',
+        age: 24,
+        mbti: 'INTP',
+        department: '관광학부',
+        height: 180,
+        hobby: '독서, 음악 감상',
+        highlight: '재미있고 유쾌해요',
+        gender: 'female',
+      },
+      {
+        user_id: 3,
+        nickname: '용감한 무지',
+        contact: 'instagram1234',
+        age: 22,
+        department: '간호학과',
+        mbti: 'ISTP',
+        height: 160,
+        hobby: '요리, 베이킹',
+        highlight: '조용하고 섬세해요',
+        gender: 'male',
+      },
+    ],
+  };
 
   const filteredPostList =
     filter === 'all'
-      ? TestPostList
-      : TestPostList.filter((post) => post.gender === filter);
+      ? TestPostList.postits
+      : TestPostList.postits.filter((post) => post.gender === filter);
 
-  
-
-
-  console.log(filteredPostList);
   return (
     //포스트잇 아이템은 한페이지당 6개만 보여줄것
     <div className="page-container">
@@ -145,8 +166,6 @@ const MatchingPage = () => {
           <PostitBox key={item.user_id} item={item} />
         ))}
       </div>
-
-        
       <ReactPaginate
         nextLabel="다음"
         onPageChange={handlePageClick}
