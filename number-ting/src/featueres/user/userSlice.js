@@ -68,6 +68,7 @@ export const registerUser = createAsyncThunk(
       age,
       nickname,
       contact,
+      major,
       location,
       navigate,
     },
@@ -82,6 +83,7 @@ export const registerUser = createAsyncThunk(
         age,
         nickname,
         contact,
+        major,
         location,
       });
 
@@ -126,7 +128,7 @@ export const fetchUserProfile = createAsyncThunk(
 export const updateUserProfile = createAsyncThunk(
   "user/updateUserProfile",
   async (
-    { userName, email, gender, age, nickname, contact, location },
+    { userName, email, gender, age, nickname, contact, major, location },
     { dispatch, rejectWithValue }
   ) => {
     try {
@@ -137,6 +139,7 @@ export const updateUserProfile = createAsyncThunk(
         nickname,
         age,
         contact,
+        major,
         location,
       });
 
