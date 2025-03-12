@@ -1,10 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, Col, Form, Modal, Row } from 'react-bootstrap';
+import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearError, createPost } from '../../../featueres/post/postSlice';
-import './NewPostItDialog.style.css';
+import styled from 'styled-components';
 
-
+const InterestButton = styled.button`
+  display: inline-block;
+  padding: 0.6em 1.4em;
+  border-radius: 1.5em;
+  background-color: rgba(255, 182, 193, 0.8);
+  font-size: 0.8em;
+  text-align: center;
+  user-select: none;
+  transition: 0.1s ease-in;
+  color: rgba(90, 50, 60, 255);
+  cursor: pointer;
+  margin: 5px;
+  border: none;
+  &:hover {
+    background-color: rgba(255, 160, 170, 0.9);
+  }
+  &.checked {
+    background-color: rgba(255, 105, 135, 1);
+    color: white;
+  }
+`;
 
 const NewPostItDialog = ({ showDialog, setShowDialog }) => {
   const dispatch = useDispatch();
@@ -143,34 +163,10 @@ const NewPostItDialog = ({ showDialog, setShowDialog }) => {
 
         <hr />
         <h4>취미</h4>
-        {[
-          '운동',
-          '독서',
-          '음악 감상',
-          '요리',
-          '여행',
-          '게임',
-          '영화 감상',
-          '사진 촬영',
-          '미술/드로잉',
-          '글쓰기',
-          '명상',
-          '등산',
-          '자전거 타기',
-          '댄스',
-          '캠핑',
-          '악기 연주',
-        ].map((tag) => (
-          <button
-            type="button"
-            key={tag}
-            className={`interest-checkbox-button ${
-              selectedHobby.includes(tag) ? 'checked' : ''
-            }`}
-            onClick={() => handleTagChange(tag)}
-          >
+        {[ '운동', '독서', '음악 감상', '요리', '여행', '게임', '영화 감상', '사진 촬영', '미술/드로잉', '글쓰기', '명상', '등산', '자전거 타기', '댄스', '캠핑', '악기 연주', ].map((tag) => (
+          <InterestButton key={tag} className={selectedHobby.includes(tag) ? 'checked' : ''} onClick={() => handleTagChange(tag)}>
             {tag}
-          </button>
+          </InterestButton>
         ))}
         <hr />
         <Button
