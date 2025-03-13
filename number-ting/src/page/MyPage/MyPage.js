@@ -69,21 +69,59 @@ const MyPage = () => {
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [gender, setGender] = useState("남성");
-  const [birth_date, setBirthDate] = useState("");
+  const [age, setAge] = useState("");
   const [major, setMajor] = useState("");
-  const [location, setLocation] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [contact, setContact] = useState("");
+  const [contactMethod, setContactMethod] = useState("phone");
+  const placeholders = {
+    phone: "전화번호를 입력하세요.",
+    instagram: "인스타 ID를 입력하세요.",
+    kakao: "카카오톡 ID를 입력하세요.",
+  };
+
+  // const [birth_date, setBirthDate] = useState("");
+  // const [major, setMajor] = useState("");
+  // const [location, setLocation] = useState("");
 
   useEffect(() => {
     dispatch(fetchUserProfile());
   }, [dispatch]);
+
+  // 마이페이지 데이터가 로드되면 콘솔에 출력
+  useEffect(() => {
+    if (profile) {
+      console.log("응답 데이터:", JSON.stringify(profile, null, 2));
+    } else {
+      console.log("⚠️ 아직 데이터가 로드되지 않았습니다.");
+    }
+  }, [profile]);
+
+  // 컴포넌트가 마운트될 때 사용자 정보 불러오기
+  // 컴포넌트가 마운트될 때 사용자 정보 불러오기
+  useEffect(() => {
+    console.log("📌 Fetching user profile..."); // API 요청 전 로그
+    dispatch(fetchUserProfile());
+  }, [dispatch]);
+
+  // 마이페이지 데이터가 로드되면 콘솔에 출력
+  useEffect(() => {
+    if (profile) {
+      console.log("응답 데이터:", JSON.stringify(profile, null, 2)); // API 응답 데이터 확인
+    } else {
+      console.log("⚠️ 아직 데이터가 로드되지 않았습니다.");
+    }
+  }, [profile]);
 
   useEffect(() => {
     if (profile) {
       setUserName(profile.userName || "");
       setEmail(profile.email || "");
       setGender(profile.gender || "남성");
-      setBirthDate(profile.birth_date || "");
+      setAge(profile.age || "");
       setMajor(profile.major || "");
+      setNickname(profile.nickname || "");
+      setContact(profile.contact || "");
       setLocation(profile.location || "");
     }
   }, [profile]);
@@ -94,9 +132,11 @@ const MyPage = () => {
       updateUserProfile({
         userName,
         email,
+        nickname,
         gender,
-        birth_date,
+        age,
         major,
+        contact,
         location,
       })
     );
@@ -129,15 +169,36 @@ const MyPage = () => {
             <option value="여성">여성</option>
           </Select>
           <Input
-            type="date"
-            value={birth_date}
-            onChange={(e) => setBirthDate(e.target.value)}
+            type="number"
+            placeholder="나이"
+            value={age}
+            onChange={(e) => setAge(e.target.value)}
           />
           <Input
             type="text"
             placeholder="전공"
             value={major}
             onChange={(e) => setMajor(e.target.value)}
+          />
+          <Input
+            type="text"
+            placeholder="닉네임"
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
+          />
+          <Select
+            value={contactMethod}
+            onChange={(e) => setContactMethod(e.target.value)}
+          >
+            <option value="phone">전화번호</option>
+            <option value="instagram">인스타그램</option>
+            <option value="kakao">카카오톡</option>
+          </Select>
+          <Input
+            type="text"
+            placeholder={placeholders[contactMethod]}
+            value={contact}
+            onChange={(e) => setContact(e.target.value)}
           />
           <Input
             type="text"
