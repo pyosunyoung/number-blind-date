@@ -8,19 +8,36 @@ export const createChatRoom = createAsyncThunk(
     try {
       const accessToken = sessionStorage.getItem("access_token");
       if (!accessToken) throw new Error("Access token not found");
-
+      console.log("[chatslice] accessToken ",accessToken)
+      // const response = await api.post(
+      //   "/create/chat/room",
+        
+      //   // {
+      //   //   headers: {
+      //   //     Authorization: `Bearer ${accessToken}`,
+      //   //   },
+      //   //   params: {
+      //   //     ownerEmail : ownerEmail
+      //   //   } , //오른쪽 ownerEmail안에 pyo@bu.ac.kr 들어있음음
+      //   // }
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${accessToken}`,
+      //     },
+      //     params: { ownerEmail }, // 쿼리 파라미터로 전달
+      //   }
+      // );
       const response = await api.post(
         "/create/chat/room",
-        
+        null,  // ✅ POST 요청의 본문이 없으므로 `null`
         {
-          Header: {
+          headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-          Params: {
-            ownerEmail : ownerEmail
-          } , //오른쪽 ownerEmail안에 pyo@bu.ac.kr 들어있음음
+          params: { ownerEmail }, // ✅ 쿼리 파라미터 전달
         }
       );
+      
       dispatch(showToastMessage({ message: "채팅방 생성 완료", status: "success" }));
       return response.data;
     } catch (error) {
