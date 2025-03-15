@@ -9,32 +9,14 @@ export const createChatRoom = createAsyncThunk(
       const accessToken = sessionStorage.getItem("access_token");
       if (!accessToken) throw new Error("Access token not found");
       console.log("[chatslice] accessToken ",accessToken)
-      // const response = await api.post(
-      //   "/create/chat/room",
-        
-      //   // {
-      //   //   headers: {
-      //   //     Authorization: `Bearer ${accessToken}`,
-      //   //   },
-      //   //   params: {
-      //   //     ownerEmail : ownerEmail
-      //   //   } , //오른쪽 ownerEmail안에 pyo@bu.ac.kr 들어있음음
-      //   // }
-      //   {
-      //     headers: {
-      //       Authorization: `Bearer ${accessToken}`,
-      //     },
-      //     params: { ownerEmail }, // 쿼리 파라미터로 전달
-      //   }
-      // );
       const response = await api.post(
         "/create/chat/room",
-        null,  // ✅ POST 요청의 본문이 없으므로 `null`
+        null,  // POST 요청의 본문이 없으므로 `null`
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-          params: { ownerEmail }, // ✅ 쿼리 파라미터 전달
+          params: { ownerEmail }, // 쿼리 파라미터로 전달
         }
       );
       
