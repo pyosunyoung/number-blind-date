@@ -8,7 +8,7 @@ export const createChatRoom = createAsyncThunk(
     try {
       const accessToken = sessionStorage.getItem("access_token");
       if (!accessToken) throw new Error("Access token not found");
-      console.log("[chatslice] accessToken ",accessToken)
+
       const response = await api.post(
         "/create/chat/room",
         null,  // POST 요청의 본문이 없으므로 `null`
