@@ -5,7 +5,6 @@ import PrivateRoute from './PrivateRoute';
 import MyPage from '../page/MyPage/MyPage';
 import AdminPage from '../page/AdminPage/AdminPage';
 import RegisterPage from '../page/RegisterPage/RegisterPage';
-
 import IntroPage from '../page/IntroPage/IntroPage';
 import NoticePage from '../page/NoticePage/NoticePage';
 import AIMatchingPage from '../page/AIMatchingPage/AIMatchingPage';
@@ -27,7 +26,7 @@ const AppRouter = () => {
         <Route path="/NoticePage" element={<NoticePage />} />
         <Route path="/MatchingPage" element={<MatchingPage/>} />
         <Route path="/AIMatchingPage" element={<AIMatchingPage />} />
-        <Route path="/ChattingRoom" element={<ChattingRoomPage />} />
+        <Route path="/ChattingRoom/:id" element={<ChattingRoomPage />} />
         <Route path="/ChattingList" element={<ChattingListPage />} />
         <Route path="/mypage" element={<MyPage />} />
         {/* <Route element={<PrivateRoute permissionLevel="customer" />}>

@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from 'react-redux';
+import { getChatList } from '../../featueres/chat/chatSlice';
 
 // const Container = styled.div`
 //   display: flex;
@@ -64,28 +66,54 @@ const MemberNumber = styled.div`
 
 
 
-const ChattingListPage = ({ rooms }) => {
-  const navigate = useNavigate();
 
+const ChattingListPage = ({ rooms }) => {
+  const {chatList} = useSelector((state)=>state.post)
+  const navigate = useNavigate();
   const moveToChat = (rid) => {
-    navigate(`/room/${rid}`);
+    navigate(`/ChattingRoom/${rid}`);
   };
+  useEffect(()=>{
+    getChatList();
+  }, []); // [chatList.length]테스트 할 때 이렇게 들가야 함
+// 문득든생각 닉네임 중복검사 빡세게 해야할듯
+  const TestChatList = 
+      [
+        {
+          chatRoomId: 1,
+          owner: "백석대 차은우",
+          sender: "백석대 표선영",
+        },
+        {
+          chatRoomId: 2,
+          owner: "백석대 설윤",
+          sender: "백석대 표선영",
+        },
+        {
+          chatRoomId: 3,
+          owner: "백석대 장원영",
+          sender: "백석대 표선영",
+        },
+
+      ]
+    
+  
   return (
     // <Container>
     //   <Title>Chatting List Page</Title>
-    // </Container>
-    <RoomBody>
+    // </Container> // 밑에 테스트시 TestChatList는는 => chatList로 모두 변경 부탁드립니다~
+    <RoomBody>공지사항
     <RoomNav>채팅 ▼</RoomNav>
-    {rooms.length > 0 &&
-      rooms.map((room) => (
-        <RoomList key={room._id} onClick={() => moveToChat(room._id)}>
+    {TestChatList.length > 0 &&
+      TestChatList.map((room) => (
+        <RoomList key={room.chatRoomId} onClick={() => moveToChat(room.owner)}> 
           <RoomTitle>
             <ProfileImage src="/profile.jpeg" />
-            <p>{room.room}</p>
+            <p>{room.owner}</p>
           </RoomTitle>
-          <MemberNumber>{room.members.length}</MemberNumber>
+          <MemberNumber>{TestChatList.length}</MemberNumber>
         </RoomList>
-      ))}
+      ))} 
   </RoomBody>
   );
 };

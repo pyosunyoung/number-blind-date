@@ -52,7 +52,7 @@ const IntroPage = () => {
       <StyledButton onClick={() => dispatch(logout())}>로그아웃</StyledButton>
       <StyledButton onClick={() => navigate("/MyPage")}>마이페이지</StyledButton>
       <StyledButton onClick={() => navigate("/ChattingRoom")}>채팅방</StyledButton>
-      <StyledButton onClick={() => navigate("/ChattingListPage")}>채팅방</StyledButton>
+      <StyledButton onClick={() => navigate("/ChattingList")}>채팅리스트</StyledButton>
     </Container>
   );
 };
