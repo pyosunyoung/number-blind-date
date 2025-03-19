@@ -28,10 +28,24 @@ export const createChatRoom = createAsyncThunk(
   }
 );
 
+export const getChatList = createAsyncThunk(
+  "chat/chatList",
+  async ({ rejectWithValue }) => {
+    try{
+      const response = api.get("/chat/rooms")
+      if(response.status !== 200) throw new Error(response.error);
+      return response.data
+    }catch(error){
+      return rejectWithValue(error.error);
+    }
+  }
+)
+
 const chatSlice = createSlice({
   name: "chat",
   initialState: {
     chatRoom: null,
+    chatList: null,
     error: null,
     success: false,
   },
@@ -51,7 +65,20 @@ const chatSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
         state.success = false;
-      });
+      })
+      .addCase(getChatList.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(getChatList.fulfilled, (state, action) => {
+        state.loading = false;
+        state.chatList = action.payload;
+        state.success = true;
+      })
+      .addCase(getChatList.rejected, (state, action) =>{
+        state.loading = true;
+        state.error = action.payload
+        state.success = false;
+      })
   },
 });
 
