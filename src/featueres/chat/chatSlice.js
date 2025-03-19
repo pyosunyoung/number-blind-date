@@ -28,10 +28,35 @@ export const createChatRoom = createAsyncThunk(
   }
 );
 
+export const getChatList = createAsyncThunk(
+  "chat/chatList",
+  async (token, { rejectWithValue }) => {
+    try{
+      
+      const response = await api.get("/chat/rooms",
+         // POST 요청의 본문이 없으므로 `null`
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+
+      if(response.status !== 200) throw new Error(response.error);
+
+      // console.log("API 응답 데이터:", response.data);
+      return response.data;
+    }catch(error){
+
+      return rejectWithValue(error.error);
+    }
+  }
+)
+
 const chatSlice = createSlice({
   name: "chat",
   initialState: {
     chatRoom: null,
+    chatList: [],
     error: null,
     success: false,
   },
@@ -51,7 +76,21 @@ const chatSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
         state.success = false;
-      });
+      })
+      .addCase(getChatList.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getChatList.fulfilled, (state, action) => {
+        state.loading = false;
+        // console.log("action.payload",action.payload);
+        state.chatList = action.payload;
+        state.success = true;
+      })
+      .addCase(getChatList.rejected, (state, action) =>{
+        state.loading = false;
+        state.error = action.payload
+        state.success = false;
+      })
   },
 });
 

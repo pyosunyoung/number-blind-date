@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
+import { getChatList } from '../../featueres/chat/chatSlice';
 
 // const Container = styled.div`
 //   display: flex;
@@ -64,30 +66,93 @@ const MemberNumber = styled.div`
 
 
 
-const ChattingListPage = ({ rooms }) => {
-  const navigate = useNavigate();
 
+const ChattingListPage = ({ rooms }) => {
+  const  {chatList} = useSelector((state)=>state.chat);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const accessToken = sessionStorage.getItem("access_token");
   const moveToChat = (rid) => {
-    navigate(`/room/${rid}`);
+    navigate(`/ChattingRoom/${rid}`);
   };
-  return (
-    // <Container>
-    //   <Title>Chatting List Page</Title>
-    // </Container>
-    <RoomBody>
+
+  useEffect(() => {
+    if (accessToken) {
+      dispatch(getChatList(accessToken));
+    }
+
+  }, [accessToken, dispatch]);
+  console.log("1",chatList);
+ 
+
+// 문득든생각 닉네임 중복검사 빡세게 해야할듯
+  // const TestChatList = 
+  //     [
+  //       {
+  //         chatRoomId: 1,
+  //         owner: "백석대 차은우",
+  //         sender: "백석대 표선영",
+  //       },
+  //       {
+  //         chatRoomId: 2,
+  //         owner: "백석대 설윤",
+  //         sender: "백석대 표선영",
+  //       },
+  //       {
+  //         chatRoomId: 3,
+  //         owner: "백석대 장원영",
+  //         sender: "백석대 표선영",
+  //       },
+
+  //     ]
+    
+  
+//   return (
+//     // <Container>
+//     //   <Title>Chatting List Page</Title>
+//     // </Container> // 밑에 테스트시 TestChatList는는 => chatList로 모두 변경 부탁드립니다~
+//     <RoomBody>공지사항
+//     <RoomNav>채팅 ▼</RoomNav>
+//     {TestChatList.length > 0 &&
+//       TestChatList.map((room) => (
+//         <RoomList key={room.chatRoomId} onClick={() => moveToChat(room.owner)}> 
+//           <RoomTitle>
+//             <ProfileImage src="/profile.jpeg" />
+//             <p>{room.owner}</p>
+//           </RoomTitle>
+//           <MemberNumber>{TestChatList.length}</MemberNumber>
+//         </RoomList>
+//       ))} 
+//   </RoomBody>
+//   );
+// };
+
+// export default ChattingListPage;
+
+return (
+  <RoomBody>
+    공지사항
     <RoomNav>채팅 ▼</RoomNav>
-    {rooms.length > 0 &&
-      rooms.map((room) => (
-        <RoomList key={room._id} onClick={() => moveToChat(room._id)}>
+
+    {/* 🔥 오류 발생 시 메시지 표시 */}
+
+
+    {/* 🔥 채팅방 목록 표시 (안전하게 옵셔널 체이닝 사용) */}
+    {chatList?.length > 0 ? (
+      chatList.map((room) => (
+        <RoomList key={room.chatRoomId} onClick={() => moveToChat(room.chatRoomId)}>
           <RoomTitle>
             <ProfileImage src="/profile.jpeg" />
-            <p>{room.room}</p>
+            <p>{room.chatRoomName}</p>
           </RoomTitle>
-          <MemberNumber>{room.members.length}</MemberNumber>
+          <MemberNumber>{chatList.length}</MemberNumber>
         </RoomList>
-      ))}
+      ))
+    ) : (
+      <p>채팅방이 없습니다.</p>
+    )}
   </RoomBody>
-  );
+);
 };
 
 export default ChattingListPage;
