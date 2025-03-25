@@ -64,9 +64,6 @@ const MemberNumber = styled.div`
   padding: 3px 8px;
 `;
 
-
-
-
 const ChattingListPage = ({ rooms }) => {
   const  {chatList} = useSelector((state)=>state.chat);
   const navigate = useNavigate();
