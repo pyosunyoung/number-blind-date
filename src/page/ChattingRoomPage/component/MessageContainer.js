@@ -56,29 +56,58 @@ const MessageContainer = ({ messageList, user }) => {
   return (
     <div>
       {messageList.map((message, index) => (
-        <Container key={message._id}>
-          {message.user.name === "system" ? (
+        // <Container key={message._id}>
+        //   {message.user.name === "system" ? (
+        //     <SystemMessageContainer>
+        //       <SystemMessage>{message.chat}</SystemMessage>
+        //     </SystemMessageContainer>
+        //   ) : message.user.name === user.name ? (
+        //     <MyMessageContainer>
+        //       <MyMessage>{message.chat}</MyMessage>
+        //     </MyMessageContainer>
+        //   ) : (
+        //     <YourMessageContainer>
+        //       <ProfileImage
+        //         src="/profile.jpeg"
+        //         style={
+        //           (index === 0
+        //             ? { visibility: "visible" }
+        //             : messageList[index - 1].user.name === user.name) ||
+        //           messageList[index - 1].user.name === "system"
+        //             ? { visibility: "visible" }
+        //             : { visibility: "hidden" }
+        //         }
+        //       />
+        //       <YourMessage>{message.chat}</YourMessage>
+        //     </YourMessageContainer>
+        //   )}
+        // </Container>
+        <Container key={index}>
+          {/* 시스템 메시지 처리 */}
+          {message.sender_id === "system" ? (
             <SystemMessageContainer>
-              <SystemMessage>{message.chat}</SystemMessage>
+              <SystemMessage>{message.message}</SystemMessage>
             </SystemMessageContainer>
-          ) : message.user.name === user.name ? (
+          ) : message.sender_id === user.id ? (
+            /* 내 메시지 */
             <MyMessageContainer>
-              <MyMessage>{message.chat}</MyMessage>
+              <MyMessage>{message.message}</MyMessage>
             </MyMessageContainer>
           ) : (
+            /* 상대방 메시지 */
             <YourMessageContainer>
+              {/* 프로필 이미지 표시 여부 결정 */}
               <ProfileImage
                 src="/profile.jpeg"
                 style={
-                  (index === 0
-                    ? { visibility: "visible" }
-                    : messageList[index - 1].user.name === user.name) ||
-                  messageList[index - 1].user.name === "system"
+                  index === 0 ||
+                  (index > 0 &&
+                    messageList[index - 1].sender_id !== message.sender_id)
                     ? { visibility: "visible" }
                     : { visibility: "hidden" }
                 }
               />
-              <YourMessage>{message.chat}</YourMessage>
+              <YourMessage>{message.message}</YourMessage>
             </YourMessageContainer>
           )}
         </Container>
