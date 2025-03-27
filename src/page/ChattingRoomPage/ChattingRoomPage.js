@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import styled from "styled-components";
 import { Button } from "@mui/base/Button";
 import { Client } from "@stomp/stompjs";
@@ -22,7 +23,7 @@ const AppContainer = styled.div`
 const Navbar = styled.nav`
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: center;s
   padding: 20px;
 `;
 
@@ -235,36 +236,77 @@ const ChattingRoomPage = ({ user }) => {
   }, [roomId]);
 
   return (
-    <AppContainer>
-      <Navbar>
-        <BackButton onClick={leaveRoom}>←</BackButton>
-        <NavUser>{user?.name}</NavUser>
-        <BurgerMenu icon={faBars} onClick={() => setMenuOpen(true)} />
-      </Navbar>
-      {messageList.length > 0 && (
-        <MessageContainer messageList={messageList} user={user} />
-      )}
-      <InputField
-        message={message}
-        setMessage={setMessage}
-        sendMessage={sendMessage}
-      />
+    // <AppContainer>
+    //   <Navbar>
+    //     <BackButton onClick={leaveRoom}>←</BackButton>
+    //     <NavUser>{user?.name}</NavUser>
+    //     <BurgerMenu icon={faBars} onClick={() => setMenuOpen(true)} />
+    //   </Navbar>
+    //   {messageList.length > 0 && (
+    //     <MessageContainer messageList={messageList} user={user} />
+    //   )}
+    //   <InputField
+    //     message={message}
+    //     setMessage={setMessage}
+    //     sendMessage={sendMessage}
+    //   />
 
-      <SideMenu open={menuOpen}>
-        <CloseButton onClick={() => setMenuOpen(false)}>&times;</CloseButton>
-        <SideMenuList>
-          <h2 style={{ color: "white" }}>채팅 참여자</h2>
-          {chatRoom?.participants?.length > 0 ? ( // 채팅 참여자
-            chatRoom.participants.map((user, index) => (
-              <button key={index}>{user.name}</button>
-            ))
-          ) : (
-            <p style={{ color: "white" }}>참여자가 없습니다.</p>
-          )}
-          <LeaveButton onClick={deleteRoom}>나가기</LeaveButton>
-        </SideMenuList>
-      </SideMenu>
-    </AppContainer>
+    //   <SideMenu open={menuOpen}>
+    //     <CloseButton onClick={() => setMenuOpen(false)}>&times;</CloseButton>
+    //     <SideMenuList>
+    //       <h2 style={{ color: "white" }}>채팅 참여자</h2>
+    //       {chatRoom?.participants?.length > 0 ? ( // 채팅 참여자
+    //         chatRoom.participants.map((user, index) => (
+    //           <button key={index}>{user.name}</button>
+    //         ))
+    //       ) : (
+    //         <p style={{ color: "white" }}>참여자가 없습니다.</p>
+    //       )}
+    //       <LeaveButton onClick={deleteRoom}>나가기</LeaveButton>
+    //     </SideMenuList>
+    //   </SideMenu>
+    // </AppContainer>
+    <AppContainer>
+  <Navbar>
+    <BackButton onClick={leaveRoom}>←</BackButton>
+    <NavUser>{user?.name || "사용자"}</NavUser>
+    <BurgerMenu icon={faBars} onClick={() => setMenuOpen(true)} />
+  </Navbar>
+
+  {/* 메시지 있을 경우에만 MessageContainer 렌더링 */}
+  {Array.isArray(messageList) && messageList.length > 0 ? (
+    <MessageContainer messageList={messageList} user={user} />
+  ) : (
+    <p style={{ textAlign: "center", marginTop: "20px" }}>
+      아직 메시지가 없습니다.
+    </p>
+  )}
+
+  <InputField
+    message={message}
+    setMessage={setMessage}
+    sendMessage={sendMessage}
+  />
+
+  {/* 사이드 메뉴 (참여자 표시 및 나가기 버튼) */}
+  <SideMenu open={menuOpen}>
+    <CloseButton onClick={() => setMenuOpen(false)}>&times;</CloseButton>
+    <SideMenuList>
+      <h2 style={{ color: "white" }}>채팅 참여자</h2>
+      {chatRoom?.participants?.length > 0 ? (
+        chatRoom.participants.map((participant, index) => (
+          <button key={index}>
+            {participant?.name || participant?.nickname || "알 수 없음"}
+          </button>
+        ))
+      ) : (
+        <p style={{ color: "white" }}>참여자가 없습니다.</p>
+      )}
+      <LeaveButton onClick={deleteRoom}>나가기</LeaveButton>
+    </SideMenuList>
+  </SideMenu>
+</AppContainer>
+
   );
 };
 
