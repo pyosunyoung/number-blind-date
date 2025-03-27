@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-
 import { Button } from "@mui/base/Button";
-import { Client} from "@stomp/stompjs";
-
+import { Client } from "@stomp/stompjs";
 import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import InputField from "./component/InputField";
 import MessageContainer from "./component/MessageContainer";
-import { useSelector , useDispatch} from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { deleteChatRoom } from "../../featueres/chat/chatSlice";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 
@@ -53,10 +51,10 @@ const SideMenu = styled.div`
   width: ${(props) => (props.open ? "250px" : "0")};
   position: absolute;
   top: 0;
-  right: 0;  // 왼쪽이 아니라 오른쪽에서 나오도록 변경
+  right: 0; // 왼쪽이 아니라 오른쪽에서 나오도록 변경
   background-color: rgb(189, 42, 42);
   overflow-x: hidden;
-  transition: width 0.5s ease;  // 부드럽게 열리도록 애니메이션 적용
+  transition: width 0.5s ease; // 부드럽게 열리도록 애니메이션 적용
   padding-top: 60px;
   z-index: 2;
 `;
@@ -109,7 +107,7 @@ const ChattingRoomPage = ({ user }) => {
   const navigate = useNavigate();
   const { id } = useParams(); // 유저가 조인한 방의 아이디를 url에서 가져옴
   // const { chatRoom } = useSelector((state) => state.chat);
-  const { chatRoom } = useSelector((state) => state.chat)
+  const { chatRoom } = useSelector((state) => state.chat);
   const { id: roomId } = useParams(); // URL에서 채팅방 ID 가져오기
   const [stompClient, setStompClient] = useState(null);
   const [messageList, setMessageList] = useState([]); // 웹소켓 클라이언트를 상태로 저장해서 채팅 서버와의 연결을 유지함.
@@ -125,16 +123,96 @@ const ChattingRoomPage = ({ user }) => {
   const deleteRoom = async () => {
     try {
       await dispatch(deleteChatRoom(id)).unwrap();
-      navigate("/")
+      navigate("/");
     } catch (error) {
       console.error("채팅방 나가기 오류:", error);
       alert("채팅방을 나갈 수 없습니다.");
     }
-  }
+  };
 
+  // useEffect(() => {
+  //   const client = new Client({
+  //     brokerURL: "ws://localhost:8080/ws-connect", // 백엔드 WebSocket 주소 노션 참고함.
+  //     reconnectDelay: 5000, // 재연결 딜레이
+  //     onConnect: () => {
+  //       console.log("WebSocket 연결 시작");
+
+  //       // 채팅방 메시지 수신 구독
+  //       client.subscribe(`/sub/chat/room/${roomId}`, (message) => {
+  //         const receivedMessage = JSON.parse(message.body);
+  //         setMessageList((prevMessages) => [...prevMessages, receivedMessage]);
+  //       });
+  //     },
+  //   });
+
+  //   client.activate();
+  //   setStompClient(client);
+
+  //   return () => {
+  //     console.log("WebSocket 연결 종료");
+  //     client.deactivate();
+  //   };
+  // }, [roomId]);
+
+  // 채팅 내역 가져오기 (GET 방식)
+  useEffect(() => {
+    const loadChatMessages = async () => {
+      try {
+        const accessToken = sessionStorage.getItem("access_token");
+        const cleanToken = accessToken ? accessToken.trim() : "";
+
+        const response = await axios.get(
+          `http://localhost:8080/chat/room/${roomId}/messages`,
+          {
+            headers: {
+              Authorization: `Bearer ${cleanToken}`,
+            },
+          }
+        );
+        setMessageList(response.data); // 채팅 메시지 목록 설정
+      } catch (error) {
+        console.error("채팅 메시지 로드 실패", error);
+      }
+    };
+    loadChatMessages();
+  }, [roomId]); // roomId가 변경될 때마다 메시지 로드
+
+  const sendMessage = () => {
+    // if (!stompClient || !message.trim()) return;
+    if (!stompClient || stompClient.connected !== true || !message.trim()) {
+      console.error("WebSocket이 연결되지 않았거나 메시지가 비어 있습니다!");
+      return;
+    }
+
+    // const chatMessage = {
+    //   room_id: parseInt(roomId),
+    //   sender_id: user?.id, // user.id는 백엔드에서 받는 사용자 ID
+    //   message: message,
+    // };
+    const chatMessage = {
+      chatRoomId: parseInt(roomId),
+      content: message,
+    };
+
+    const accessToken = sessionStorage.getItem("access_token");
+    const cleanToken = accessToken ? accessToken.trim() : "";
+
+    stompClient.publish({
+      destination: `/pub/chat/${roomId}`,
+      headers: {
+        Authorization: `Bearer ${cleanToken}`,
+      },
+
+      body: JSON.stringify(chatMessage),
+    });
+
+    setMessage(""); // 메시지 전송 후 입력 필드 비우기
+  };
+
+  // WebSocket 연결 및 구독 설정
   useEffect(() => {
     const client = new Client({
-      brokerURL: "ws://localhost:8080/ws-connect", // 백엔드 WebSocket 주소 노션 참고함.
+      brokerURL: "ws://localhost:8080/ws-connect", // WebSocket 서버 URL
       reconnectDelay: 5000, // 재연결 딜레이
       onConnect: () => {
         console.log("WebSocket 연결 시작");
@@ -156,47 +234,12 @@ const ChattingRoomPage = ({ user }) => {
     };
   }, [roomId]);
 
-  const sendMessage = () => {
-    // if (!stompClient || !message.trim()) return;
-    if (!stompClient || stompClient.connected !== true || !message.trim()) {
-      console.error("WebSocket이 연결되지 않았거나 메시지가 비어 있습니다!");
-      return;
-    }
-
-    // const chatMessage = {
-    //   room_id: parseInt(roomId),
-    //   sender_id: user?.id, // user.id는 백엔드에서 받는 사용자 ID
-    //   message: message,
-    // };
-    const chatMessage = {
-      chatRoomId: parseInt(roomId),
-      content: message
-    };
-    
-
-    const accessToken = sessionStorage.getItem("access_token");
-    const cleanToken = accessToken ? accessToken.trim() : "";
-
-
-    stompClient.publish({
-      destination: `/pub/chat/${roomId}`,
-      headers: {
-        Authorization: `Bearer ${cleanToken}`,
-      },
-      
-      body: JSON.stringify(chatMessage),
-    });
-
-    setMessage(""); // 메시지 전송 후 입력 필드 비우기
-  };
-
-
   return (
     <AppContainer>
       <Navbar>
         <BackButton onClick={leaveRoom}>←</BackButton>
         <NavUser>{user?.name}</NavUser>
-        <BurgerMenu icon={faBars} onClick={()=>setMenuOpen(true)}/>
+        <BurgerMenu icon={faBars} onClick={() => setMenuOpen(true)} />
       </Navbar>
       {messageList.length > 0 && (
         <MessageContainer messageList={messageList} user={user} />
@@ -221,9 +264,6 @@ const ChattingRoomPage = ({ user }) => {
           <LeaveButton onClick={deleteRoom}>나가기</LeaveButton>
         </SideMenuList>
       </SideMenu>
-
-
-
     </AppContainer>
   );
 };
