@@ -82,16 +82,27 @@ const MessageContainer = ({ messageList, user }) => {
         //     </YourMessageContainer>
         //   )}
         // </Container>
+
+
+
         <Container key={index}>
+          {/* 디버깅 로그 */}
+          {console.log(
+            `🔍 index: ${index}, sender:`,
+            message?.sender,
+            "sender.id:",
+            message?.sender?.id
+          )}
+
           {/* 시스템 메시지 처리 */}
-          {message.sender_id === "system" ? (
+          {!message?.sender || message?.sender?.id === "system" ? (
             <SystemMessageContainer>
-              <SystemMessage>{message.message}</SystemMessage>
+              <SystemMessage>{message.content}</SystemMessage>
             </SystemMessageContainer>
-          ) : message.sender_id === user.id ? (
+          ) : message?.sender?.id === user?.id ? (
             /* 내 메시지 */
             <MyMessageContainer>
-              <MyMessage>{message.message}</MyMessage>
+              <MyMessage>{message.content}</MyMessage>
             </MyMessageContainer>
           ) : (
             /* 상대방 메시지 */
@@ -99,18 +110,21 @@ const MessageContainer = ({ messageList, user }) => {
               {/* 프로필 이미지 표시 여부 결정 */}
               <ProfileImage
                 src="/profile.jpeg"
-                style={
-                  index === 0 ||
-                  (index > 0 &&
-                    messageList[index - 1].sender_id !== message.sender_id)
-                    ? { visibility: "visible" }
-                    : { visibility: "hidden" }
-                }
+                style={{
+                  visibility:
+                    index === 0 ||
+                      messageList[index - 1]?.sender?.id !== message?.sender?.id
+                      ? "visible"
+                      : "hidden",
+                }}
               />
-              <YourMessage>{message.message}</YourMessage>
+              <YourMessage>{message.content}</YourMessage>
             </YourMessageContainer>
           )}
         </Container>
+
+
+
       ))}
     </div>
   );
