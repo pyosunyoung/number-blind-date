@@ -19,7 +19,7 @@ export const createChatRoom = createAsyncThunk(
           params: { ownerEmail }, // 쿼리 파라미터로 전달
         }
       );
-      
+
       dispatch(showToastMessage({ message: "채팅방 생성 완료", status: "success" }));
       return response.data;
     } catch (error) {
@@ -27,6 +27,29 @@ export const createChatRoom = createAsyncThunk(
     }
   }
 );
+
+export const deleteChatRoom = createAsyncThunk(
+  "chat/deleteChatRoom",
+  async (id, { dispatch, rejectWithValue }) => {
+    try {
+      const accessToken = sessionStorage.getItem("access_token");
+      if (!accessToken) throw new Error("Access token not found");
+      const response = await api.delete(
+        `/chat/room/${id}/delete`,
+        null,  // POST 요청의 본문이 없으므로 `null`
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      dispatch(showToastMessage({ message: "채팅방 삭제 완료", status: "success" }));
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+)
 
 const chatSlice = createSlice({
   name: "chat",
@@ -38,9 +61,9 @@ const chatSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-    .addCase(createChatRoom.pending, (state, action) => {
-      state.loading = true;
-    })
+      .addCase(createChatRoom.pending, (state, action) => {
+        state.loading = true;
+      })
       .addCase(createChatRoom.fulfilled, (state, action) => {
         state.loading = false;
         state.chatRoom = action.payload;
@@ -51,7 +74,21 @@ const chatSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
         state.success = false;
-      });
+      })
+      .addCase(deleteChatRoom.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(deleteChatRoom.fulfilled, (state, action) => {
+        state.loading = false;
+        state.chatRoom = action.payload;
+        state.error = "";
+        state.success = true;
+      })
+      .addCase(deleteChatRoom.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.success = false;
+      })
   },
 });
 
