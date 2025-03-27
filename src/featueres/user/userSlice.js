@@ -42,19 +42,25 @@ export const loginWithGoogle = createAsyncThunk(
   async (token, { rejectWithValue }) => { }
 );
 
-export const logout = () => async (dispatch) => {
-  try {
-    await api.post("/auth/logout", {});
-    sessionStorage.removeItem("access_token");
-    dispatch(userLoggedOut());
-    window.location.href = "/login";
-  } catch (error) {
-    console.log("로그아웃 실패", error);
-  }
-  // user정보를 지우고
+export const logout = createAsyncThunk(
+  "user/logout",
+  async (_, { dispatch }) => {
+    try {
+      await api.post("/auth/logout", {});
+      sessionStorage.removeItem("access_token");
+      dispatch(showToastMessage({
+        message: "로그아웃을 완료했습니다!",
+        status: "success",
+      }))
+      window.location.href = "/login";
+    } catch (error) {
+      console.log("로그아웃 실패", error);
+    }
+    // user정보를 지우고
 
-  // session token의 값을 지운다.
-};
+    // session token의 값을 지운다.
+  }
+);
 
 // 회원가입 요청 처리 (Redux 비동기 함수) - 주은 수정
 export const registerUser = createAsyncThunk(
@@ -197,14 +203,7 @@ const userSlice = createSlice({
       state.loginError = null;
       state.registrationError = null;
     },
-    // 로그아웃 처리: 상태 초기화
-    userLoggedOut: (state) => {
-      state.user = null;
-      state.loading = false;
-      state.loginError = null;
-      state.registrationError = null;
-      state.success = false;
-    },
+    logout,
   },
   extraReducers: (builder) => {
     // async처럼 외부의 함수를 통해 호출
@@ -253,9 +252,17 @@ const userSlice = createSlice({
         state.loading = false;
         state.loginError = action.payload;
       })
-
+      .addCase(logout.fulfilled, () => {
+        return {
+          user: null,
+          loading: false,
+          loginError: null,
+          registrationError: null,
+          success: false,
+        }
+      })
   },
 
 });
-export const { clearErrors, userLoggedOut } = userSlice.actions;
+export const { clearErrors } = userSlice.actions;
 export default userSlice.reducer;

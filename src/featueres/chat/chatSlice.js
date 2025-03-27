@@ -28,6 +28,28 @@ export const createChatRoom = createAsyncThunk(
   }
 );
 
+export const deleteChatRoom = createAsyncThunk(
+  "chat/deleteChatRoom",
+  async (id, { dispatch, rejectWithValue }) => {
+    try {
+      const accessToken = sessionStorage.getItem("access_token");
+      if (!accessToken) throw new Error("Access token not found");
+      const response = await api.delete(
+        `/chat/room/${id}/delete`,
+        null,  // POST 요청의 본문이 없으므로 `null`
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      dispatch(showToastMessage({ message: "채팅방 삭제 완료", status: "success" }));
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+)
 export const getChatList = createAsyncThunk(
   "chat/chatList",
   async (token, { rejectWithValue }) => {
